@@ -27,5 +27,6 @@ Geleneksel tarım verilerini modern yazılım çözümleriyle birleştirerek; an
 🛠️ Teknik Detaylar
 
 •	Versiyon Kontrol: Git & GitHub
+
 •	Geliştirme Ortamı: (Örn: VS Code, PyCharm)
 
