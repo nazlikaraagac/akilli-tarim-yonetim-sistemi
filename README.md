@@ -1,4 +1,5 @@
 🌾 Akıllı Tarım Yönetim Sistemi
+
 Bu proje, tarımsal süreçlerin dijital takibi ve verimliliğinin artırılması amacıyla Fırat Üniversitesi Yazılım Mühendisliği bünyesinde geliştirilmektedir.
 
 
@@ -16,6 +17,7 @@ Aşağıdaki liste, projenin geliştirilmesinden ve sürdürülmesinden sorumlu 
 •	Özgür Ulusoy
 
 🚀 Proje Amacı
+
 Geleneksel tarım verilerini modern yazılım çözümleriyle birleştirerek; analiz, takip ve yönetim kolaylığı sağlamak.
 🛠️ Teknik Detaylar
 •	Versiyon Kontrol: Git & GitHub
