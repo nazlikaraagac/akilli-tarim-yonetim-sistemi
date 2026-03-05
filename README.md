@@ -1,4 +1,5 @@
 🌾 Akıllı Tarım Yönetim Sistemi
+
 Bu proje, tarımsal süreçlerin dijital takibi ve verimliliğinin artırılması amacıyla Fırat Üniversitesi Yazılım Mühendisliği bünyesinde geliştirilmektedir.
 
 👥 Proje Ekibi
