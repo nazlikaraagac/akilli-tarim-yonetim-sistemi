@@ -1,9 +1,13 @@
 # 🌾 Akıllı Tarım Yönetim Sistemi - Gereksinim Analizi Raporu
 
 **Proje Adı:** Akıllı Tarım Yönetim Sistemi
+
 **Takım:** Sıfır Hata Timi
+
 **Hazırlayan:** Özgür Ulusoy
+
 **Tarih:** 06.03.2026
+
 
 ---
 
