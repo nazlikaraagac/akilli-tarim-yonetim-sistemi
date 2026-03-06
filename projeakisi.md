@@ -1,18 +1,18 @@
 # “AKILLI TARIM YÖNETİM SİSTEMİ" PROJE AKIŞI VE HAFTALIK İLERLEME
 
-Bu dosya, "Sıfır Hata Timi" takımının haftalık proje ilerlemesini ve üyelerin görev dağılımlarını içermektedir.
+*Bu dosya, **"Sıfır Hata Timi"** takımının haftalık proje ilerlemesini ve üyelerin görev dağılımlarını içermektedir.*
 
 
-# 1. Hafta (5-12 Mart)
+## 1. Hafta (5-12 Mart)
    
-(Nazlı KARAAĞAÇ): GitHub reposu oluşturuldu, branch koruma kuralları (main) ayarlandı.
+**(Nazlı KARAAĞAÇ):** GitHub reposu oluşturuldu, branch koruma kuralları (main) ayarlandı.
 
-[Özgür ULUSOY]: Proje için gerekli olan fonksiyonel ve non-fonksiyonel gereksinimleri belirlendi.
-Kullanıcı hikayeleri veya kullanım senaryoları oluşturarak gereksinimleri detaylı bir şekilde belgelendi
+**[Özgür ULUSOY]:** Proje için gerekli olan fonksiyonel ve non-fonksiyonel gereksinimleri belirlendi.
+Kullanıcı hikayeleri veya kullanım senaryoları oluşturarak gereksinimleri detaylı bir şekilde belgelendi.
 Gereksinim belgesini ekip ile paylaşıldı.
 
-[Birgül GÖKTÜRK]:
+**[Birgül GÖKTÜRK]:**
 
-[Arda YEŞİL]:
+**[Arda YEŞİL]:**
 
-[Miraç Özcan AĞCABAY]:
+**[Miraç Özcan AĞCABAY]:**
