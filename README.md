@@ -10,7 +10,7 @@ Aşağıdaki liste, projenin geliştirilmesinden ve sürdürülmesinden sorumlu 
 
 •	Nazlı Karaağaç (Proje Yöneticisi)
 
-•	Miraç Ağcabay
+•	Miraç Özcan Ağcabay
 
 •	Birgül Göktürk
 
