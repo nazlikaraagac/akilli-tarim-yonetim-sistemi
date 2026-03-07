@@ -21,6 +21,7 @@ Bu hafta projenin temel taşları atılmış, analiz çalışmaları tamamlanmı
 * **📝 Gereksinim Toplama ve Belgeleme**
 * 
     * Çiftçilerin ve yöneticilerin ihtiyaç duyacağı anlık bildirim, raporlama ve otomatik sulama gibi fonksiyonel gereksinimler maddeler halinde listelenmiştir.
+ ozgur_ulusoy
  
 
 # 🌾 Akıllı Tarım Yönetim Sistemi - Gereksinim Analizi Raporu
@@ -105,6 +106,8 @@ Sistem, sadece sulama süreçlerini yönetmekle kalmaz; aynı zamanda toprağın
 
 
 
+=======
+main
 
 * **🤖 Teknoloji Araştırması ve Seçimi**
 * 
