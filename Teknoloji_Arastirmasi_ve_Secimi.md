@@ -3,7 +3,7 @@
 
 **Proje Adı:** Akıllı Tarım Yönetim Sistemi
 
-**Görev:** Teknoloji Araştırması ve Seçimi
+**Takım:** Sıfır Hata Timi
 
 **Hazırlayan:** Birgül Göktürk
 
