@@ -29,7 +29,6 @@ Bu hafta projenin temel taşları atılmış, analiz çalışmaları tamamlanmı
 | :--- | :--- |
 | **Hazırlayan** | Miraç Özcan Ağcabay |
 | **Tarih** | 07.03.2026 |
-| **Konu** | Proje Analizi ve Kapsam |
 
 ---
 
