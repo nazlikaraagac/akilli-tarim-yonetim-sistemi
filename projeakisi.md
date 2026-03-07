@@ -14,22 +14,37 @@
 
 Bu hafta projenin temel taşları atılmış, analiz çalışmaları tamamlanmış ve geliştirme ortamları hazırlanmıştır. Yapılan çalışmaların detayları şöyledir:
 
+
+
+***Miraç Özcan AĞCABAY:***
 * **🎯 Proje Analizi ve Kapsam Belirleme**
 * 
     * Sistemde kullanılacak temel işlevler belirlenerek, projenin hangi tarımsal ihtiyaçlara çözüm sunacağı ve sınırları netleştirilmiştir.
 
+
+
+***Özgür ULUSOY:***
 * **📝 Gereksinim Toplama ve Belgeleme**
 * 
     * Çiftçilerin ve yöneticilerin ihtiyaç duyacağı anlık bildirim, raporlama ve otomatik sulama gibi fonksiyonel gereksinimler maddeler halinde listelenmiştir.
 
+
+
+***Birgül GÖKTÜRK:***
 * **🤖 Teknoloji Araştırması ve Seçimi**
 * 
     * Projenin yapay zeka ayağı için Python (Scikit-learn), veri saklama için MySQL ve donanım tarafında kullanılacak IoT sensör modelleri kararlaştırılmıştır.
 
+
+
+***Arda YEŞİL:***
 * **🏗️ Proje Mimari Tasarımı**
 * 
     * Sensörlerden gelen verilerin bulut veritabanına aktarılması ve oradan web/mobil arayüzlere dağıtılmasını sağlayan sistem mimarisi kurgulanmıştır.
 
+
+
+***Nazlı KARAAĞAÇ:***
 * **⚙️ Geliştirme Ortamı Kurulumu**
 * 
     * Ekip üyelerinin bilgisayarlarına gerekli kod editörleri (VS Code), kütüphaneler ve Git araçları kurularak ortak çalışma ekosistemi (GitHub) aktif edilmiştir.
