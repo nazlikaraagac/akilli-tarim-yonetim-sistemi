@@ -111,8 +111,7 @@ Sistem, sadece sulama süreçlerini yönetmekle kalmaz; aynı zamanda toprağın
     * Projenin yapay zeka ayağı için Python (Scikit-learn), veri saklama için MySQL ve donanım tarafında kullanılacak IoT sensör modelleri kararlaştırılmıştır.
 
 * **🏗️ Proje Mimari Tasarımı**
-* 
-
+  
 ## 1. Genel Bakış
 
 Bu doküman, IoT ve Yapay Zeka destekli Akıllı Tarım Yönetim Sistemi'nin genel mimari tasarımını, modüller arası ilişkileri, veri akışını ve sistem bileşenlerini tanımlar. Sensörlerden toplanan ham veriler işlenerek bulut veritabanına aktarılır; buradan web ve mobil arayüzlere dağıtılır.
