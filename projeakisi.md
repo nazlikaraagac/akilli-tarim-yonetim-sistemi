@@ -112,7 +112,203 @@ Sistem, sadece sulama süreçlerini yönetmekle kalmaz; aynı zamanda toprağın
 
 * **🏗️ Proje Mimari Tasarımı**
 * 
-    * Sensörlerden gelen verilerin bulut veritabanına aktarılması ve oradan web/mobil arayüzlere dağıtılmasını sağlayan sistem mimarisi kurgulanmıştır.
+
+## 1. Genel Bakış
+
+Bu doküman, IoT ve Yapay Zeka destekli Akıllı Tarım Yönetim Sistemi'nin genel mimari tasarımını, modüller arası ilişkileri, veri akışını ve sistem bileşenlerini tanımlar. Sensörlerden toplanan ham veriler işlenerek bulut veritabanına aktarılır; buradan web ve mobil arayüzlere dağıtılır.
+
+---
+
+## 2. Mimari Genel Görünüm
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    KATMAN 3 — MOBİL UYGULAMA                    │
+│         Dashboard · Gübre Onay · Bildirim · Raporlar            │
+└────────────────────────────┬────────────────────────────────────┘
+                             │  REST API / HTTPS
+┌────────────────────────────▼────────────────────────────────────┐
+│                   KATMAN 2 — BACKEND SUNUCU                     │
+│  Veri İşleme │ YZ Analiz (Scikit-learn) │ Otomasyon │ Bildirim  │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │  SQL / ORM
+┌──────────────────────▼──────────────────────────────────────────┐
+│                   KATMAN 1 — VERİTABANI                         │
+│   Sensör Verileri │ Gübre Reçetesi │ AI Eğitim Verisi │ Loglar  │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │  MQTT / REST
+┌──────────────────────▼──────────────────────────────────────────┐
+│                  KATMAN 0 — IOT CİHAZI                          │
+│  Raspberry Pi / Arduino · Sensörler · Aktüatörler               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Katman Tanımları
+
+### 3.1 Katman 0 — IoT Cihazı (Donanım)
+
+Sistemin fiziksel katmanıdır. Tarla ortamından ham veri toplar ve aktüatörler aracılığıyla fiziksel müdahale gerçekleştirir.
+
+**Mikrodenetleyici:**
+- Raspberry Pi 4 (birincil) veya Arduino Mega (yedek)
+
+**Sensörler:**
+
+| Sensör | Ölçüm | Örnekleme Sıklığı |
+|--------|-------|-------------------|
+| Kapasitif Toprak Nem Sensörü | Toprak nem oranı (%) | Her 5 dakika |
+| DHT22 | Ortam sıcaklığı (°C) ve hava nemi (%) | Her 1 dakika |
+| NPK Sensörü | Azot (N), Fosfor (P), Potasyum (K) mg/kg + pH | Her 30 dakika |
+
+**Aktüatörler:**
+
+| Aktüatör | Görev |
+|----------|-------|
+| 12V Su Pompası | Otomatik sulama |
+| Röle Modülü | Motor on/off kontrolü |
+| Gübre Dozlama Valfi | Gübre miktarı kontrolü |
+
+**İletişim Protokolü:** MQTT (düşük bant genişliği, güvenilir mesajlaşma)
+
+---
+
+### 3.2 Katman 1 — Veritabanı
+
+Tüm sistem verilerinin kalıcı olarak saklandığı katmandır.
+
+**Teknoloji:** MySQL veya PostgreSQL
+
+**Tablolar:**
+
+| Tablo | İçerik | İlgili FR |
+|-------|--------|-----------|
+| `sensor_readings` | Nem, sıcaklık, NPK değerleri + timestamp | FR-04 |
+| `fertilizer_recipes` | Gübre tavsiyeleri, miktar, onay durumu | FR-07, FR-10 |
+| `ai_training_data` | Etiketli veri seti, model ağırlıkları | FR-06 |
+| `users` | Kullanıcı profilleri ve yetki seviyeleri | FR-09 |
+| `system_logs` | Alarm kayıtları, işlem geçmişi | FR-08 |
+| `plant_growth_stages` | Bitki gelişim evreleri ve besin ihtiyaçları | FR-07 |
+
+---
+
+### 3.3 Katman 2 — Backend Sunucu
+
+İş mantığının, yapay zeka modellerinin ve otomasyon kurallarının çalıştığı ana katmandır.
+
+**Teknoloji:** Python 3.x
+
+#### 3.3.1 Veri İşleme Modülü
+- Ham sensör verisinin doğrulanması ve temizlenmesi
+- Zaman damgası eklenmesi
+- Eşik değer kontrolü (nem < %30 → sulama tetikleme)
+- Veriyi veritabanına yazma
+
+#### 3.3.2 Yapay Zeka Analiz Modülü
+- **Kütüphane:** Scikit-learn
+- Sulama zamanlaması optimizasyonu (hava durumu API entegrasyonu)
+- NPK verisi analizi ve gübre tavsiyesi üretimi
+- Bitki gelişim evresine göre besin ihtiyacı hesaplama
+- Model yeniden eğitimi için veri birikimi
+
+#### 3.3.3 Otomasyon Kontrol Modülü
+- FR-05: Nem eşik kontrolü → pompa tetikleme
+- FR-08: Anormal durum tespiti → acil mod
+- Zamanlama motoru (cron tabanlı periyodik görevler)
+- IoT cihazına komut gönderme
+
+#### 3.3.4 Bildirim Servisi
+- Push notification (mobil)
+- SMS ve e-posta bildirimi
+- Acil durum alarmları (sensör arızası, aşırı sıcaklık)
+
+**API:** RESTful — JSON formatında veri iletimi
+
+---
+
+### 3.4 Katman 3 — Mobil Uygulama
+
+Çiftçi ile sistem arasındaki arayüz katmanıdır.
+
+**Platform:** iOS ve Android
+
+**Ekranlar:**
+
+| Ekran | İçerik | İlgili FR |
+|-------|--------|-----------|
+| Ana Dashboard | Nem %, Sıcaklık, Toprak Sağlığı skoru | FR-09 |
+| Gübre Onay Ekranı | Reçete detayı, miktar, onayla/reddet | FR-10 |
+| Geçmiş Raporlar | Aylık gübre/sulama kullanımı grafikleri | FR-09 |
+| Bildirim Merkezi | Alarmlar ve sistem mesajları | FR-08 |
+
+---
+
+## 4. Veri Akışı
+
+### 4.1 Otomatik Sulama Akışı (FR-05, FR-06)
+
+```
+Nem Sensörü → [Nem < %30?] → Veri İşleme Modülü
+    → Hava Durumu API Kontrolü
+        → [Yağmur yok] → Otomasyon Modülü → Pompa Tetikleme
+        → Bildirim Servisi → Çiftçi Telefonu
+```
+
+### 4.2 Akıllı Gübreleme Akışı (FR-03, FR-07, FR-10)
+
+```
+NPK Sensörü → Veri İşleme Modülü → Veritabanı (sensor_readings)
+    → YZ Analiz Modülü
+        → plant_growth_stages tablosu sorgusu
+        → Gübre Tavsiyesi Üret → Veritabanı (fertilizer_recipes)
+        → Bildirim Servisi → Çiftçi Onayı (Mobil)
+            → [Onaylandı] → Otomasyon Modülü → Gübre Valfi Aç
+```
+
+### 4.3 Acil Durum Akışı (FR-08)
+
+```
+Sensör → Anormal Değer Tespiti (arıza / aşırı sıcaklık)
+    → Otomasyon Modülü → ACİL MOD
+        → Tüm Aktüatörler Durdur
+        → Bildirim Servisi → Yönetici Alarmı (Push + SMS)
+        → system_logs tablosuna kayıt
+```
+
+---
+
+## 5. Modüller Arası İlişki Matrisi
+
+| Modül | Veri İşleme | YZ Analiz | Otomasyon | Bildirim | Veritabanı | IoT |
+|-------|:-----------:|:---------:|:---------:|:--------:|:----------:|:---:|
+| **Veri İşleme** | — | → | → | — | → | ← |
+| **YZ Analiz** | ← | — | → | → | ↔ | — |
+| **Otomasyon** | ← | ← | — | → | → | → |
+| **Bildirim** | — | ← | ← | — | → | — |
+| **Veritabanı** | ↔ | ↔ | ← | ← | — | — |
+| **IoT Cihazı** | → | — | ← | — | — | — |
+
+> `→` veri gönderir, `←` veri alır, `↔` çift yönlü
+
+---
+
+## 6. Gereksinim — Mimari Bileşen Eşleşmesi
+
+| Gereksinim | Sorumlu Bileşen |
+|------------|-----------------|
+| FR-01 Nem ölçümü | Kapasitif Nem Sensörü + Veri İşleme Modülü |
+| FR-02 Sıcaklık/nem | DHT22 + Veri İşleme Modülü |
+| FR-03 NPK ölçümü | NPK Sensörü + Veri İşleme Modülü |
+| FR-04 Veri kayıt | Veritabanı (sensor_readings tablosu) |
+| FR-05 Oto sulama | Otomasyon Modülü + Pompa/Röle |
+| FR-06 YZ sulama optimizasyonu | YZ Analiz Modülü (Scikit-learn) |
+| FR-07 Gübre tavsiyesi | YZ Analiz Modülü + fertilizer_recipes |
+| FR-08 Acil durum | Otomasyon Modülü + Bildirim Servisi |
+| FR-09 Mobil görüntüleme | Mobil Uygulama Dashboard |
+| FR-10 Gübre onayı | Mobil Uygulama Onay Ekranı |
+
+---
 
 * **⚙️ Geliştirme Ortamı Kurulumu**
 * 
