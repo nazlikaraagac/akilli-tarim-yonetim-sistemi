@@ -5,16 +5,6 @@
 
 ---
 
-### 🚀 1. Hafta Görev Dağılımı (Sıralı İş Akışı)
-
-1. **Miraç Özcan Ağcabay:** Proje Analizi ve Kapsam Belirleme (✅ Tamamlandı)
-2. **Özgür Ulusoy:** Gereksinim Toplama ve Belgeleme (✅ Tamamlandı)
-3. **Birgül Göktürk:** Teknoloji Araştırması ve Seçimi (✅ Tamamlandı)
-4. **Arda Yeşil:** Proje Mimari Tasarımı (📋 Devam Ediyor)
-5. **Nazlı Karaağaç:** Geliştirme Ortamı Kurulumu (📋 Devam Ediyor)
-
----
-
 ## 📅 Haftalık İlerleme Raporu
 
 ### **🚀 1. Hafta: Planlama, Analiz ve Altyapı Kurulumu**
@@ -111,7 +101,37 @@ Proje, IoT ve Yapay Zeka destekli otomasyon ile verimliliği artırmayı, **akı
 ### 4️⃣ Arda YEŞİL
 **🏗️ Proje Mimari Tasarımı**
 
-#### 1. Genel Bakış
-IoT ve Yapay Zeka destekli sistemin mimarisi, sensörlerden buluta ve oradan kullanıcı arayüzlerine uzanan veri akışını tanımlar.
+#### 1. 🌐 Genel Bakış
+IoT ve Yapay Zeka destekli **Akıllı Tarım Yönetim Sistemi'nin (ATYS)** genel mimari tasarımı; sensörlerden toplanan verilerin işlenerek bulut veritabanına aktarılması ve oradan web/mobil arayüzlere dağıtılması üzerine kuruludur.
 
-#### 2. Mimari Genel Görünüm
+#### 2. 🏛️ Mimari Genel Görünüm
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   KATMAN 3 — MOBİL UYGULAMA                     │
+│        Dashboard · Gübre Onay · Bildirim · Raporlar             │
+└────────────────────────────┬────────────────────────────────────┘
+│  REST API / HTTPS
+┌────────────────────────────▼────────────────────────────────────┐
+│                   KATMAN 2 — BACKEND SUNUCU                     │
+│  Veri İşleme │ YZ Analiz (Scikit-learn) │ Otomasyon │ Bildirim  │
+└──────────────────────┬──────────────────────────────────────────┘
+│  SQL / ORM
+┌──────────────────────▼──────────────────────────────────────────┐
+│                   KATMAN 1 — VERİTABANI                         │
+│   Sensör Verileri │ Gübre Reçetesi │ AI Eğitim Verisi │ Loglar  │
+└──────────────────────┬──────────────────────────────────────────┘
+│  MQTT / REST
+┌──────────────────────▼──────────────────────────────────────────┐
+│                  KATMAN 0 — IOT CİHAZI                          │
+│  Raspberry Pi / Arduino · Sensörler · Aktüatörler               │
+└─────────────────────────────────────────────────────────────────┘
+
+#### 3. 🧱 Katman Tanımları
+* **🔌 Katman 0 — IoT Cihazı (Donanım):** Sistemin fiziksel ayağıdır. **Raspberry Pi/Arduino** kullanılarak; Toprak Nemi, DHT22 (Sıcaklık/Nem) ve NPK sensörlerinden veri toplanır. **MQTT** protokolü ile haberleşir.
+* **🗄️ Katman 1 — Veritabanı:** **MySQL** üzerinde `sensor_readings`, `fertilizer_recipes` ve `users` tablolarını barındırır. Tüm geçmiş veriler burada tutulur.
+* **🧠 Katman 2 — Backend Sunucu:** **Python** tabanlıdır. Veriyi işler, **Scikit-learn** ile analiz eder ve otomasyon kurallarını *(Sulama zamanı geldi mi? Gübre lazım mı?)* işletir.
+* **📱 Katman 3 — Mobil Uygulama:** Çiftçinin sistemi izlediği ekrandır.
+
+#### 4. 🔄 Veri Akışı Örnekleri
+* **💧 Otomatik Sulama:** Nem Sensörü → Veri İşleme → [Nem < %30] → Otomasyon Modülü → Pompa Çalıştır.
+* **🧪 Akıllı Gübreleme:** NPK Sensörü → YZ Analiz → "Azot Eksik" Tespiti → Gübre Tavsiyesi Üret → Çiftçi Onayı Bekle.
