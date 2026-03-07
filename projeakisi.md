@@ -4,16 +4,6 @@
 
 **🎓 Grup Yöneticisi:** Nazlı Karaağaç
 
-
-
-### 🚀 1. Hafta Görev Dağılımı
-
-* **Özgür Ulusoy:** Gereksinim Toplama ve Belgeleme
-* **Birgül Göktürk:** Teknoloji Araştırması ve Seçimi
-* **Miraç Özcan Ağcabay:** Proje Analizi ve Kapsam Belirleme
-* **Nazlı Karaağaç:** Geliştirme Ortamı Kurulumu
-* **Arda Yeşil:** Proje Mimari Tasarımı
-
 ---
 
 ## 📅 Haftalık İlerleme Raporu
