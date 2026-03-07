@@ -11,7 +11,7 @@
 Kullanıcı hikayeleri veya kullanım senaryoları oluşturarak gereksinimleri detaylı bir şekilde belgelendi.
 Gereksinim belgesini ekip ile paylaşıldı.
 
-**[Birgül GÖKTÜRK]:**
+**[Birgül GÖKTÜRK]:** Proje için uygun teknolojiler (dil, framework, veritabanı vb.) araştırıldı. Avantaj ve dezavantajları değerlendirilerek en uygun teknoloji yığını belirlendi ve seçimler gerekçelendirilerek raporlandı.
 
 **[Arda YEŞİL]:**
 
