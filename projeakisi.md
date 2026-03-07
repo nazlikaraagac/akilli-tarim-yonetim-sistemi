@@ -15,7 +15,8 @@ Bu hafta projenin temel taşları atılmış, analiz çalışmaları tamamlanmı
 
 
 
-***Miraç Özcan AĞCABAY:***
+### 1️⃣ Miraç Özcan AĞCABAY
+
 * **🎯 Proje Analizi ve Kapsam Belirleme**
 * 
     * Sistemde kullanılacak temel işlevler belirlenerek, projenin hangi tarımsal ihtiyaçlara çözüm sunacağı ve sınırları netleştirilmiştir.
@@ -131,7 +132,7 @@ Projenin ilerleyen aşamalarında aşağıdaki geliştirmeler yapılabilir:
 
 
 
-***Özgür ULUSOY:***
+### 2️⃣ Özgür ULUSOY
 * **📝 Gereksinim Toplama ve Belgeleme**
 * 
     * Çiftçilerin ve yöneticilerin ihtiyaç duyacağı anlık bildirim, raporlama ve otomatik sulama gibi fonksiyonel gereksinimler maddeler halinde listelenmiştir.
@@ -222,14 +223,14 @@ Sistem, sadece sulama süreçlerini yönetmekle kalmaz; aynı zamanda toprağın
 
 
 
-***Birgül GÖKTÜRK:***
+### 3️⃣ Birgül GÖKTÜRK
 * **🤖 Teknoloji Araştırması ve Seçimi**
 * 
     * Projenin yapay zeka ayağı için Python (Scikit-learn), veri saklama için MySQL ve donanım tarafında kullanılacak IoT sensör modelleri kararlaştırılmıştır.
 
 
 
-***Arda YEŞİL:***
+### 4️⃣ Arda YEŞİL
 * **🏗️ Proje Mimari Tasarımı**
   
 ## 1. Genel Bakış
@@ -428,7 +429,7 @@ Sensör → Anormal Değer Tespiti (arıza / aşırı sıcaklık)
 | FR-10 Gübre onayı | Mobil Uygulama Onay Ekranı |
 
 ---
-***Nazlı KARAAĞAÇ:***
+### 5️⃣ Nazlı KARAAĞAÇ
 * **⚙️ Geliştirme Ortamı Kurulumu**
 * 
     * Ekip üyelerinin bilgisayarlarına gerekli kod editörleri (VS Code), kütüphaneler ve Git araçları kurularak ortak çalışma ekosistemi (GitHub) aktif edilmiştir.
