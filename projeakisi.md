@@ -22,9 +22,6 @@ Bu hafta projenin temel taşları atılmış, analiz çalışmaları tamamlanmı
     * Sistemde kullanılacak temel işlevler belirlenerek, projenin hangi tarımsal ihtiyaçlara çözüm sunacağı ve sınırları netleştirilmiştir.
  
 
-
-# 🌾 Akıllı Tarım Yönetim Sistemi - Proje Analizi ve Kapsam Belirleme Raporu
-
 | 📋 Proje Bilgileri | 📝 Detaylar |
 | :--- | :--- |
 | **Hazırlayan** | Miraç Özcan Ağcabay |
@@ -137,8 +134,6 @@ Projenin ilerleyen aşamalarında aşağıdaki geliştirmeler yapılabilir:
     * Çiftçilerin ve yöneticilerin ihtiyaç duyacağı anlık bildirim, raporlama ve otomatik sulama gibi fonksiyonel gereksinimler maddeler halinde listelenmiştir.
  ozgur_ulusoy
  
-
-# 🌾 Akıllı Tarım Yönetim Sistemi - Gereksinim Analizi Raporu
 
 | Proje Bilgileri | Detaylar |
 | :--- | :--- |
