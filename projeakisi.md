@@ -106,9 +106,6 @@ Sistem, sadece sulama süreçlerini yönetmekle kalmaz; aynı zamanda toprağın
 
 
 
-=======
-main
-
 * **🤖 Teknoloji Araştırması ve Seçimi**
 * 
     * Projenin yapay zeka ayağı için Python (Scikit-learn), veri saklama için MySQL ve donanım tarafında kullanılacak IoT sensör modelleri kararlaştırılmıştır.
