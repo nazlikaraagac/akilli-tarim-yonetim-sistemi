@@ -214,15 +214,6 @@ Sistem, sadece sulama süreçlerini yönetmekle kalmaz; aynı zamanda toprağın
 3. Geçmiş raporlara bakarak geçen ay ne kadar gübre kullandığını inceler.
 
 
-
-
-
-### 3️⃣ Birgül GÖKTÜRK
-* **🤖 Teknoloji Araştırması ve Seçimi**
-* 
-    * Projenin yapay zeka ayağı için Python (Scikit-learn), veri saklama için MySQL ve donanım tarafında kullanılacak IoT sensör modelleri kararlaştırılmıştır.
- 
-
 ### 3️⃣ Birgül GÖKTÜRK
 **🤖 Teknoloji Araştırması ve Seçimi**
 
