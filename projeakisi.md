@@ -112,13 +112,13 @@ Sistem, sadece sulama süreçlerini yönetmekle kalmaz; aynı zamanda toprağın
 
 * **🏗️ Proje Mimari Tasarımı**
   
-## 1. Genel Bakış
+## 1. 🔭 Genel Bakış
 
 Bu doküman, IoT ve Yapay Zeka destekli Akıllı Tarım Yönetim Sistemi'nin genel mimari tasarımını, modüller arası ilişkileri, veri akışını ve sistem bileşenlerini tanımlar. Sensörlerden toplanan ham veriler işlenerek bulut veritabanına aktarılır; buradan web ve mobil arayüzlere dağıtılır.
 
 ---
 
-## 2. Mimari Genel Görünüm
+## 2. 🗺️ Mimari Genel Görünüm
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -144,9 +144,9 @@ Bu doküman, IoT ve Yapay Zeka destekli Akıllı Tarım Yönetim Sistemi'nin gen
 
 ---
 
-## 3. Katman Tanımları
+## 3. 🧱 Katman Tanımları
 
-### 3.1 Katman 0 — IoT Cihazı (Donanım)
+### 3.1 🔌 Katman 0 — IoT Cihazı (Donanım)
 
 Sistemin fiziksel katmanıdır. Tarla ortamından ham veri toplar ve aktüatörler aracılığıyla fiziksel müdahale gerçekleştirir.
 
@@ -173,7 +173,7 @@ Sistemin fiziksel katmanıdır. Tarla ortamından ham veri toplar ve aktüatörl
 
 ---
 
-### 3.2 Katman 1 — Veritabanı
+### 3.2 🗃️ Katman 1 — Veritabanı
 
 Tüm sistem verilerinin kalıcı olarak saklandığı katmandır.
 
@@ -192,32 +192,32 @@ Tüm sistem verilerinin kalıcı olarak saklandığı katmandır.
 
 ---
 
-### 3.3 Katman 2 — Backend Sunucu
+### 3.3 ⚙️ Katman 2 — Backend Sunucu
 
 İş mantığının, yapay zeka modellerinin ve otomasyon kurallarının çalıştığı ana katmandır.
 
 **Teknoloji:** Python 3.x
 
-#### 3.3.1 Veri İşleme Modülü
+#### 3.3.1 🔄 Veri İşleme Modülü
 - Ham sensör verisinin doğrulanması ve temizlenmesi
 - Zaman damgası eklenmesi
 - Eşik değer kontrolü (nem < %30 → sulama tetikleme)
 - Veriyi veritabanına yazma
 
-#### 3.3.2 Yapay Zeka Analiz Modülü
+#### 3.3.2 🤖 Yapay Zeka Analiz Modülü
 - **Kütüphane:** Scikit-learn
 - Sulama zamanlaması optimizasyonu (hava durumu API entegrasyonu)
 - NPK verisi analizi ve gübre tavsiyesi üretimi
 - Bitki gelişim evresine göre besin ihtiyacı hesaplama
 - Model yeniden eğitimi için veri birikimi
 
-#### 3.3.3 Otomasyon Kontrol Modülü
+#### 3.3.3 🎛️ Otomasyon Kontrol Modülü
 - FR-05: Nem eşik kontrolü → pompa tetikleme
 - FR-08: Anormal durum tespiti → acil mod
 - Zamanlama motoru (cron tabanlı periyodik görevler)
 - IoT cihazına komut gönderme
 
-#### 3.3.4 Bildirim Servisi
+#### 3.3.4 🔔 Bildirim Servisi
 - Push notification (mobil)
 - SMS ve e-posta bildirimi
 - Acil durum alarmları (sensör arızası, aşırı sıcaklık)
@@ -226,7 +226,7 @@ Tüm sistem verilerinin kalıcı olarak saklandığı katmandır.
 
 ---
 
-### 3.4 Katman 3 — Mobil Uygulama
+### 3.4 📱 Katman 3 — Mobil Uygulama
 
 Çiftçi ile sistem arasındaki arayüz katmanıdır.
 
@@ -243,9 +243,9 @@ Tüm sistem verilerinin kalıcı olarak saklandığı katmandır.
 
 ---
 
-## 4. Veri Akışı
+## 4. 🔀 Veri Akışı
 
-### 4.1 Otomatik Sulama Akışı (FR-05, FR-06)
+### 4.1 💧 Otomatik Sulama Akışı (FR-05, FR-06)
 
 ```
 Nem Sensörü → [Nem < %30?] → Veri İşleme Modülü
@@ -254,7 +254,7 @@ Nem Sensörü → [Nem < %30?] → Veri İşleme Modülü
         → Bildirim Servisi → Çiftçi Telefonu
 ```
 
-### 4.2 Akıllı Gübreleme Akışı (FR-03, FR-07, FR-10)
+### 4.2 🌿 Akıllı Gübreleme Akışı (FR-03, FR-07, FR-10)
 
 ```
 NPK Sensörü → Veri İşleme Modülü → Veritabanı (sensor_readings)
@@ -265,7 +265,7 @@ NPK Sensörü → Veri İşleme Modülü → Veritabanı (sensor_readings)
             → [Onaylandı] → Otomasyon Modülü → Gübre Valfi Aç
 ```
 
-### 4.3 Acil Durum Akışı (FR-08)
+### 4.3 🚨 Acil Durum Akışı (FR-08)
 
 ```
 Sensör → Anormal Değer Tespiti (arıza / aşırı sıcaklık)
@@ -277,7 +277,7 @@ Sensör → Anormal Değer Tespiti (arıza / aşırı sıcaklık)
 
 ---
 
-## 5. Modüller Arası İlişki Matrisi
+## 5. 🔗 Modüller Arası İlişki Matrisi
 
 | Modül | Veri İşleme | YZ Analiz | Otomasyon | Bildirim | Veritabanı | IoT |
 |-------|:-----------:|:---------:|:---------:|:--------:|:----------:|:---:|
@@ -292,7 +292,7 @@ Sensör → Anormal Değer Tespiti (arıza / aşırı sıcaklık)
 
 ---
 
-## 6. Gereksinim — Mimari Bileşen Eşleşmesi
+## 6. ✅ Gereksinim — Mimari Bileşen Eşleşmesi
 
 | Gereksinim | Sorumlu Bileşen |
 |------------|-----------------|
