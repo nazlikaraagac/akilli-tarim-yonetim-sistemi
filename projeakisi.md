@@ -18,6 +18,7 @@ Bu hafta projenin temel taşları atılmış, analiz çalışmaları tamamlanmı
 * 
     * Sistemde kullanılacak temel işlevler belirlenerek, projenin hangi tarımsal ihtiyaçlara çözüm sunacağı ve sınırları netleştirilmiştir.
 
+
 * **📝 Gereksinim Toplama ve Belgeleme**
 * 
     * Çiftçilerin ve yöneticilerin ihtiyaç duyacağı anlık bildirim, raporlama ve otomatik sulama gibi fonksiyonel gereksinimler maddeler halinde listelenmiştir.
