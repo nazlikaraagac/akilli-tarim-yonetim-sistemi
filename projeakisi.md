@@ -492,4 +492,90 @@ Sensör → Anormal Değer Tespiti (arıza / aşırı sıcaklık)
 * **⚙️ Geliştirme Ortamı Kurulumu**
 * 
     * Ekip üyelerinin bilgisayarlarına gerekli kod editörleri (VS Code), kütüphaneler ve Git araçları kurularak ortak çalışma ekosistemi (GitHub) aktif edilmiştir.
+ 
 
+
+
+
+
+
+## 📅 Haftalık İlerleme Raporu
+
+### **🚀 3. Hafta: Geliştirme, Entegrasyon ve Optimizasyon**
+
+Bu hafta Akıllı Tarım Yönetim Sistemi (ATYS) projesinin performansını artırma, arayüzleri entegre etme ve sistem güvenilirliğini test etme aşamalarına odaklanıyoruz. 
+
+| 👤 Sorumlu | 🛠️ Görev | 
+| :--- | :--- |
+| **Özgür Ulusoy** | Veritabanı Optimizasyonu 
+| **Birgül Göktürk** | API Entegrasyonu (Ödeme)
+| **Nazlı Karaağaç** | Test Senaryoları Geliştirme
+| **Arda Yeşil** | Hata Ayıklama ve Düzeltme
+| **Miraç Özcan Ağcabay** | Kullanıcı Arayüzü Geliştirmesi
+
+---
+
+#### 📝 3. Hafta Görev Detayları ve Hedefler
+
+### 1️⃣ Özgür ULUSOY
+**🗄️ Veritabanı Optimizasyonu: Sorgu Performansının İyileştirilmesi**
+
+**1. 🎯 Genel Bakış**
+ATYS projesinde IoT sensörlerinden gelen veriler PostgreSQL veritabanında `sensor_readings` tablosunda toplanmaktadır. Zamanla milyonlarca satıra ulaşacak bu tabloda performans kaybını önlemek için optimizasyon çalışmaları yürütülmüştür.
+
+**2. 🔍 Yavaş Sorgu Tespiti ve Analizi**
+PostgreSQL'in `EXPLAIN ANALYZE` komutu kullanılarak yavaş çalışan sorgular tespit edilmiştir. 
+
+*Sorunlu (Yavaş) Örnek Sorgu:*
+```sql
+SELECT * FROM sensor_readings 
+WHERE farm_id = 12 AND timestamp >= NOW() - INTERVAL '30 days';
+```
+
+**3. ⚡ İyileştirme 1: İndeksleme (Indexing) Stratejisi**
+Tablodaki aramaları hızlandırmak için `B-Tree` yapısında **Composite Index (Bileşik İndeks)** oluşturulmuştur.
+
+```sql
+CREATE INDEX idx_farm_timestamp 
+ON sensor_readings (farm_id, timestamp);
+```
+* **Kazanım:** Bu indeks sayesinde veri arama hızı saniyenin altına düşürülmüştür.
+
+**4. 🧹 İyileştirme 2: Sorgu Yeniden Yapılandırma (Query Refactoring)**
+Mobil uygulamayı besleyen API için sorgular optimize edilerek sadece gerekli sütunların çekilmesi sağlanmıştır.
+
+*Optimize Edilmiş (Hızlı) Sorgu:*
+```sql
+SELECT timestamp, soil_moisture 
+FROM sensor_readings 
+WHERE farm_id = 12 AND timestamp >= NOW() - INTERVAL '30 days'
+ORDER BY timestamp DESC;
+```
+* **Kazanım:** Gereksiz veri yükü kaldırılmış ve arama hızı **%85 oranında artırılmıştır.**
+
+**5. ✅ Sonuç**
+* Sorgu işleme kapasitesi artırıldı ve mobil uygulama veri yükleme gecikmeleri minimize edildi.
+
+---
+
+### 2️⃣ Birgül GÖKTÜRK
+**💳 API Entegrasyonu: Ödeme Sistemi Entegrasyonu**
+Ödeme sistemi API'sini projeye entegre ederek kullanıcıların güvenli bir şekilde ödeme yapabilmesini sağlayan altyapıyı kurar.
+
+---
+
+### 3️⃣ Nazlı KARAAĞAÇ
+**🧪 Test Senaryoları Geliştirme: Kullanıcı Kayıt ve Giriş Testleri**
+Kullanıcı kayıt ve giriş süreçleri için başarılı, başarısız ve sınır durumlarını kapsayan detaylı test senaryoları geliştirir.
+
+---
+
+### 4️⃣ Arda YEŞİL
+**🐛 Hata Ayıklama ve Düzeltme: Bildirilen Hataların Giderilmesi**
+Hata takip sisteminde bildirilen teknik aksaklıkları inceleyerek nedenlerini tespit eder ve düzeltmelerini gerçekleştirir.
+
+---
+
+### 5️⃣ Miraç Özcan AĞCABAY
+**📱 Kullanıcı Arayüzü Geliştirmesi: Profil Sayfası Tasarımı ve Entegrasyonu**
+Kullanıcı profil sayfasının görsel tasarımını tamamlayarak mevcut sisteme entegrasyonunu ve bilgi güncelleme özelliklerini hazırlar.
