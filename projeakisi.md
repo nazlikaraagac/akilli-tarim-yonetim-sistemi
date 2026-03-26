@@ -559,9 +559,36 @@ ORDER BY timestamp DESC;
 ---
 
 ### 2️⃣ Birgül GÖKTÜRK
-**💳 API Entegrasyonu: Ödeme Sistemi Entegrasyonu**
-Ödeme sistemi API'sini projeye entegre ederek kullanıcıların güvenli bir şekilde ödeme yapabilmesini sağlayan altyapıyı kurar.
+**💳 API Entegrasyonu: Güvenli Ödeme Sistemi ve Finansal Altyapı**
 
+**1. 🎯 Genel Bakış**
+ATYS üzerinden çiftçilerin gübre/tohum siparişi verebilmesi ve "Premium Analiz" paketlerine abone olabilmesi için güvenli bir ödeme altyapısı entegre edilmiştir.
+
+**2. 🔐 Güvenlik Protokolleri ve API Seçimi**
+Finansal verilerin güvenliği için **Iyzico / Stripe API** altyapısı tercih edilmiştir. Sistem mimarisi "Sıfır Veri Kaydı" prensibiyle kurulmuştur.
+
+* **Tokenization (Simgeleştirme):** Kullanıcı kart bilgileri sistemimizde tutulmaz; doğrudan API sağlayıcısı tarafından şifrelenmiş tek kullanımlık "Token"lara dönüştürülür.
+* **3D Secure & PCI-DSS:** Tüm işlemler banka onay katmanıyla (3D Secure) korunmakta ve dünya standartlarında güvenlik sertifikasyonuyla (PCI-DSS) iletilmektedir.
+
+**3. 🏗️ Teknik Uygulama ve Akış**
+Ödeme akışı, Backend (Python/FastAPI) ve API sağlayıcısı arasında asenkron bir yapıda kurgulanmıştır.
+
+| 🛠️ Entegrasyon Bileşeni | 📝 Açıklama |
+| :--- | :--- |
+| **SSL Entegrasyonu** | Veri trafiği TLS 1.2+ protokolü ile şifrelendi. |
+| **Error Handling** | 402 ve 403 hataları için kullanıcı bilgilendirme mesajları oluşturuldu. |
+| **Sandbox Environment** | Test ortamında (Mock Data) tüm senaryolar simüle edildi. |
+
+**4. 🧪 Test Senaryoları ve Doğrulama**
+
+| # | Test Senaryosu | Beklenen Sonuç | Durum |
+| :--- | :--- | :--- | :--- |
+| **TS-01** | Geçerli test kartıyla ödeme | İşlem Başarılı (200 OK) | ✅ Başarılı |
+| **TS-02** | Hatalı CVV / Bakiye | "Hatalı İşlem" Uyarısı | ✅ Başarılı |
+| **TS-03** | Webhook veri akışı | DB Güncellemesi (Success) | ✅ Başarılı |
+
+**5. ✅ Sonuç**
+Ödeme altyapısı, sistemin Sipariş Yönetimi modülüyle tam entegre hale getirilmiştir. Finansal güvenlik riskleri minimize edilmiştir.
 ---
 
 ### 3️⃣ Nazlı KARAAĞAÇ
