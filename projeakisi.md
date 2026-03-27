@@ -573,7 +573,178 @@ Kullanıcı kayıt ve giriş süreçleri için başarılı, başarısız ve sın
 ### 4️⃣ Arda YEŞİL
 **🐛 Hata Ayıklama ve Düzeltme: Bildirilen Hataların Giderilmesi**
 Hata takip sisteminde bildirilen teknik aksaklıkları inceleyerek nedenlerini tespit eder ve düzeltmelerini gerçekleştirir.
+### 🌡️ BUG-001 — Sensör verisi None döndüğünde sistem çöküyor
 
+**📝 Açıklama**
+
+DHT22 sensörü bağlantı kopukluğunda `None` değeri döndürmektedir. Veri işleme modülü bu değer üzerinde karşılaştırma yapmaya çalışırken `TypeError` fırlatıyor ve tüm otomasyon döngüsü duruyordu.
+
+**❌ Hatalı Kod**
+
+```python
+def process_sensor_data(reading):
+    # BUG: None kontrolü yapılmadan karşılaştırma
+    if reading['soil_moisture'] < MOISTURE_THRESHOLD:
+        trigger_irrigation()
+    if reading['temperature'] > TEMP_ALERT_LIMIT:
+        send_emergency_alert()
+# TypeError: '<' not supported between NoneType and int
+```
+
+**✅ Düzeltilmiş Kod**
+
+```python
+def process_sensor_data(reading):
+    # FIX: Null güvenli kontrol + sensör arıza alarmı
+    if reading is None or any(v is None for v in reading.values()):
+        log_sensor_fault(reading)
+        send_emergency_alert("sensor_failure")
+        return  # FR-08: Acil mod tetikle
+    if reading['soil_moisture'] < MOISTURE_THRESHOLD:
+        trigger_irrigation()
+    if reading['temperature'] > TEMP_ALERT_LIMIT:
+        send_emergency_alert("high_temp")
+```
+
+**🔗 İlgili Gereksinim:** FR-08 (Anormal durum tespiti → acil mod)
+
+---
+
+### 📡 BUG-002 — MQTT mesajları çevrimdışıyken buffer'a yazılmıyor
+x"
+**📝 Açıklama**
+
+İnternet bağlantısı kesildiğinde sensör okuma verileri hiçbir yere kaydedilmemekteydi. Bağlantı geri döndüğünde bu süre zarfındaki tüm ölçümler kaybolmakta, tarihsel trend analizi ve YZ modelinin eğitim verisi eksik kalmaktaydı.
+
+**❌ Hatalı Kod**
+
+```python
+def send_mqtt(topic, payload):
+    # BUG: Bağlantı yoksa veri düşürülüyor, buffer yok
+    try:
+        client.publish(topic, json.dumps(payload))
+    except ConnectionError:
+        pass  # Sessizce görmezden gel
+```
+
+**✅ Düzeltilmiş Kod**
+
+```python
+LOCAL_BUFFER_PATH = "/data/offline_buffer.json"
+
+def send_mqtt(topic, payload):
+    # FIX: Bağlantı yoksa yerel diske yaz
+    try:
+        client.publish(topic, json.dumps(payload))
+        flush_local_buffer()  # Bekleyen kayıtları gönder
+    except ConnectionError:
+        _write_to_local_buffer({
+            "topic": topic,
+            "payload": payload,
+            "timestamp": time.time()
+        })
+
+def flush_local_buffer():
+    # Bağlantı geldiğinde sıralı olarak gönder
+    if not os.path.exists(LOCAL_BUFFER_PATH):
+        return
+    with open(LOCAL_BUFFER_PATH, "r") as f:
+        buffered = json.load(f)
+    for record in buffered:
+        client.publish(record["topic"], json.dumps(record["payload"]))
+    os.remove(LOCAL_BUFFER_PATH)
+```
+
+**🔗 İlgili Gereksinim:** R-02 Risk (Bağlantı sorunlarında veri kaybı önleme)
+
+---
+
+### 🕒 BUG-003 — Veritabanı timestamp sorgusu yanlış zaman dilimi dönüyor
+
+**📝 Açıklama**
+
+Mobil uygulamada gösterilen son 30 günlük sensör verileri, sunucu UTC zamanıyla kaydedildiği ancak istemciye naive datetime olarak dönüldüğü için Türkiye yerel saatine göre **3 saat kaymaktaydı**. Çiftçiler gece sulamalarını gündüz yapılmış zannedebiliyordu.
+
+**❌ Hatalı SQL**
+
+```sql
+-- BUG: Timezone-aware olmayan sorgulama
+SELECT timestamp, soil_moisture
+FROM sensor_readings
+WHERE farm_id = %s
+  AND timestamp >= NOW() - INTERVAL '30 days'
+ORDER BY timestamp DESC;
+-- Dönen timestamp: 2026-03-14 03:00:00 (UTC naive)
+```
+
+**✅ Düzeltilmiş SQL**
+
+```sql
+-- FIX: UTC'den yerel zamana dönüşüm + AT TIME ZONE
+SELECT
+    timestamp AT TIME ZONE 'UTC'
+               AT TIME ZONE 'Europe/Istanbul' AS local_time,
+    soil_moisture,
+    temperature,
+    farm_id
+FROM sensor_readings
+WHERE farm_id = %s
+  AND timestamp >= NOW() - INTERVAL '30 days'
+ORDER BY local_time DESC;
+-- Dönen timestamp: 2026-03-14 06:00:00+03
+```
+
+**🔗 İlgili Gereksinim:** FR-04 (Tarih etiketiyle veri saklama), FR-09 (Mobil görüntüleme)
+
+---
+
+### 🌱 BUG-004 — YZ gübre tavsiyesi bitki evresi kontrolü yapmıyor
+
+**📝 Açıklama**
+
+FR-07 gereksiniminde belirtildiği üzere gübre tavsiyesi bitki gelişim evresine göre özelleştirilmeli. Ancak mevcut modül `plant_growth_stages` tablosunu hiç sorgulamıyordu; tüm bitkiler için aynı sabit NPK eşik değerleri kullanılıyordu. Bu durumda hasat dönemindeki bitkiye tohum dönemindeki doz uygulanabiliyordu.
+
+**❌ Hatalı Kod**
+
+```python
+def generate_fertilizer_advice(npk_reading, farm_id):
+    # BUG: Sabit eşikler, bitki evresine duyarsız
+    FIXED_N_THRESHOLD = 40  # mg/kg
+    if npk_reading['nitrogen'] < FIXED_N_THRESHOLD:
+        return "Azot takviyesi gerekli: 20 kg/dönüm Üre"
+```
+
+**✅ Düzeltilmiş Kod**
+
+```python
+def generate_fertilizer_advice(npk_reading, farm_id):
+    # FIX: plant_growth_stages tablosundan evreye özgü eşik çek
+    stage = db.query("""
+        SELECT growth_stage, n_threshold, p_threshold, k_threshold
+        FROM plant_growth_stages
+        WHERE farm_id = %s
+          AND %s BETWEEN stage_start AND stage_end
+    """, (farm_id, date.today())).fetchone()
+
+    if stage is None:
+        log_warning(f"Büyüme evresi bulunamadı: farm={farm_id}")
+        return None
+
+    advice = []
+    if npk_reading['nitrogen'] < stage['n_threshold']:
+        dose = calculate_dose('N', npk_reading, stage)
+        advice.append(
+            f"[{stage['growth_stage']}] Azot eksik: "
+            f"{dose:.1f} kg/dönüm Üre öneriliyor"
+        )
+    # P ve K kontrolleri benzer şekilde eklenmeli...
+    return advice if advice else None
+```
+
+**🔗 İlgili Gereksinim:** FR-07 (Gübre tavsiyesi), FR-03 (NPK ölçümü)
+
+---
+   
 ---
 
 ### 5️⃣ Miraç Özcan AĞCABAY
