@@ -471,9 +471,9 @@ Sensör → Anormal Değer Tespiti (arıza / aşırı sıcaklık)
 | FR-10 Gübre onayı | Mobil Uygulama Onay Ekranı |
 
 ---
+
 ### 5️⃣ Nazlı KARAAĞAÇ
 * **⚙️ Geliştirme Ortamı Kurulumu**
-* 
     * Ekip üyelerinin bilgisayarlarına gerekli kod editörleri (VS Code), kütüphaneler ve Git araçları kurularak ortak çalışma ekosistemi (GitHub) aktif edilmiştir.
 
 ---
