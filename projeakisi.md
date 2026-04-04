@@ -560,22 +560,339 @@ ORDER BY timestamp DESC;
 
 ### 2️⃣ Birgül GÖKTÜRK
 **💳 API Entegrasyonu: Ödeme Sistemi Entegrasyonu**
+
 Ödeme sistemi API'sini projeye entegre ederek kullanıcıların güvenli bir şekilde ödeme yapabilmesini sağlayan altyapıyı kurar.
+
+
+**1. 🎯 Genel Bakış**
+ATYS üzerinden çiftçilerin gübre/tohum siparişi verebilmesi ve "Premium Analiz" paketlerine abone olabilmesi için güvenli bir ödeme altyapısı entegre edilmiştir.
+
+**2. 🔐 Güvenlik Protokolleri ve API Seçimi**
+Finansal verilerin güvenliği için **Iyzico / Stripe API** altyapısı tercih edilmiştir. Sistem mimarisi "Sıfır Veri Kaydı" prensibiyle kurulmuştur.
+
+* **Tokenization (Simgeleştirme):** Kullanıcı kart bilgileri sistemimizde tutulmaz; doğrudan API sağlayıcısı tarafından şifrelenmiş tek kullanımlık "Token"lara dönüştürülür.
+* **3D Secure & PCI-DSS:** Tüm işlemler banka onay katmanıyla (3D Secure) korunmakta ve dünya standartlarında güvenlik sertifikasyonuyla (PCI-DSS) iletilmektedir.
+
+**3. 🏗️ Teknik Uygulama ve Akış**
+Ödeme akışı, Backend (Python/FastAPI) ve API sağlayıcısı arasında asenkron bir yapıda kurgulanmıştır.
+
+| 🛠️ Entegrasyon Bileşeni | 📝 Açıklama |
+| :--- | :--- |
+| **SSL Entegrasyonu** | Veri trafiği TLS 1.2+ protokolü ile şifrelendi. |
+| **Error Handling** | 402 ve 403 hataları için kullanıcı bilgilendirme mesajları oluşturuldu. |
+| **Sandbox Environment** | Test ortamında (Mock Data) tüm senaryolar simüle edildi. |
+
+**4. 🧪 Test Senaryoları ve Doğrulama**
+
+| # | Test Senaryosu | Beklenen Sonuç | Durum |
+| :--- | :--- | :--- | :--- |
+| **TS-01** | Geçerli test kartıyla ödeme | İşlem Başarılı (200 OK) | ✅ Başarılı |
+| **TS-02** | Hatalı CVV / Bakiye | "Hatalı İşlem" Uyarısı | ✅ Başarılı |
+| **TS-03** | Webhook veri akışı | DB Güncellemesi (Success) | ✅ Başarılı |
+
+**5. ✅ Sonuç**
+Ödeme altyapısı, sistemin Sipariş Yönetimi modülüyle tam entegre hale getirilmiştir. Finansal güvenlik riskleri minimize edilmiştir.
+---
 
 ---
 
 ### 3️⃣ Nazlı KARAAĞAÇ
+
 **🧪 Test Senaryoları Geliştirme: Kullanıcı Kayıt ve Giriş Testleri**
-Kullanıcı kayıt ve giriş süreçleri için başarılı, başarısız ve sınır durumlarını kapsayan detaylı test senaryoları geliştirir.
+
+Kullanıcı kayıt ve giriş süreçleri için başarılı, başarısız ve sınır durumlarını kapsayan testler geliştirilmiş ve sonuçları raporlanmıştır.
+
+---
+
+## 🗂️ Test Planı Genel Bakış
+
+| 📋 Rapor Bilgileri | 📝 Detaylar |
+|---|---|
+| **Hazırlayan** | Nazlı Karaağaç |
+| **Tarih** | 21.03.2026 |
+| **Test Edilen Modül** | Kullanıcı Kayıt & Giriş (Auth Modülü) |
+| **Toplam Senaryo Sayısı** | 23 |
+
+Sistemde üç farklı kullanıcı rolü test edilmiştir: **Çiftçi**, **Ziraat Mühendisi** ve **Yönetici**.
+
+---
+
+## ✅ 1. Başarılı Senaryolar
+
+| # | Test ID | Açıklama | Beklenen Sonuç | Durum |
+|---|---|---|---|---|
+| 1 | TS-KY-01 | Geçerli bilgilerle çiftçi kaydı (şifre yanıtta dönmemeli) | 201 Created | ✅ |
+| 2 | TS-KY-02 | Ziraat mühendisi rolüyle kayıt | 201 Created | ✅ |
+| 3 | TS-KY-03 | Yönetici rolüyle kayıt | 201 Created | ✅ |
+| 4 | TS-GR-01 | Doğru bilgilerle giriş ve JWT token alımı | 200 OK + token | ✅ |
+| 5 | TS-GR-02 | Alınan token ile korumalı endpoint'e erişim | 200 OK | ✅ |
+| 6 | TS-ED-01 | Kayıt sonrası doğrulama e-postasının gönderilmesi | E-posta gönderildi | ✅ |
+| 7 | TS-ED-02 | Geçerli doğrulama bağlantısına tıklanarak hesabın aktif edilmesi | 200 OK, hesap aktif | ✅ |
+| 8 | TS-SS-01 | Kayıtlı e-postaya şifre sıfırlama bağlantısı gönderilmesi | 200 OK, e-posta gönderildi | ✅ |
+| 9 | TS-SS-02 | Geçerli sıfırlama bağlantısıyla yeni şifre belirlenmesi | 200 OK, şifre güncellendi | ✅ |
+
+> 💡 **Not:** Token payload'ında kullanıcının rolü ve yetkili olduğu tarla ID'leri yer almaktadır.
+
+---
+
+## ❌ 2. Başarısız Senaryolar
+
+| # | Test ID | Açıklama | Beklenen Sonuç | Durum |
+|---|---|---|---|---|
+| 10 | TS-KY-04 | Aynı e-posta ile tekrar kayıt | 409 Conflict | ✅ |
+| 11 | TS-KY-05 | Geçersiz e-posta formatı | 422 Unprocessable Entity | ✅ |
+| 12 | TS-KY-06 | Çok kısa şifre ile kayıt | 422 Unprocessable Entity | ✅ |
+| 13 | TS-KY-07 | Boş alan bırakarak kayıt | 422 Unprocessable Entity | ✅ |
+| 14 | TS-GR-03 | Yanlış şifre ile giriş | 401 Unauthorized | ✅ |
+| 15 | TS-GR-04 | Kayıtsız e-posta ile giriş | 401 Unauthorized | ✅ |
+| 16 | TS-GR-05 | Token olmadan korumalı endpoint'e erişim | 401 Unauthorized | ✅ |
+| 17 | TS-ED-03 | Süresi dolmuş doğrulama bağlantısıyla hesap aktifleştirme denemesi | 400 Bad Request | ✅ |
+| 18 | TS-SS-03 | Kayıtsız e-postaya şifre sıfırlama talebi | 401 Unauthorized | ✅ |
+| 19 | TS-SS-04 | Süresi dolmuş sıfırlama bağlantısıyla şifre değiştirme denemesi | 400 Bad Request | ✅ |
+
+> 💡 **Not:** TS-GR-04'te sistem "Kullanıcı bulunamadı" yerine "Hatalı e-posta veya şifre" mesajı döndürmektedir. Bu, kullanıcı numaralandırma saldırılarını önlemek amacıyla bilinçli alınmış bir güvenlik kararıdır.
+
+---
+
+## ⚠️ 3. Sınır Durumu Senaryoları
+
+| # | Test ID | Açıklama | Beklenen Sonuç | Durum |
+|---|---|---|---|---|
+| 20 | TS-SN-01 | RFC standardını aşan uzunlukta e-posta girişi | 422 Unprocessable Entity | ✅ |
+| 21 | TS-SN-02 | Uzunluğu yeterli ancak büyük harf ve rakam içermeyen şifre | 422 Unprocessable Entity | ✅ |
+| 22 | TS-SN-03 | SQL enjeksiyonu denemesi | 401 / 422 (sistem çökmemeli) | ✅ |
+| 23 | TS-SN-04 | 5 ardışık hatalı girişten sonra hesap kilitleme | 429 Too Many Requests | ✅ |
+
+> 💡 **Not:** TS-SN-03, ORM katmanının parametreli sorgu yapısı sayesinde başarıyla engellenmiştir.
+
+---
+
+## 📊 4. Test Sonuçları Özeti
+
+| Kategori | Toplam | ✅ Geçti |
+|---|---|---|
+| Başarılı Senaryolar | 9 | 9 |
+| Başarısız Senaryolar | 10 | 10 |
+| Sınır Durumları | 4 | 4 |
+| **Toplam** | **23** | **23** |
 
 ---
 
 ### 4️⃣ Arda YEŞİL
 **🐛 Hata Ayıklama ve Düzeltme: Bildirilen Hataların Giderilmesi**
+
 Hata takip sisteminde bildirilen teknik aksaklıkları inceleyerek nedenlerini tespit eder ve düzeltmelerini gerçekleştirir.
+
+### 🌡️ BUG-001 — Sensör verisi None döndüğünde sistem çöküyor
+
+**📝 Açıklama**
+
+DHT22 sensörü bağlantı kopukluğunda `None` değeri döndürmektedir. Veri işleme modülü bu değer üzerinde karşılaştırma yapmaya çalışırken `TypeError` fırlatıyor ve tüm otomasyon döngüsü duruyordu.
+
+**❌ Hatalı Kod**
+
+```python
+def process_sensor_data(reading):
+    # BUG: None kontrolü yapılmadan karşılaştırma
+    if reading['soil_moisture'] < MOISTURE_THRESHOLD:
+        trigger_irrigation()
+    if reading['temperature'] > TEMP_ALERT_LIMIT:
+        send_emergency_alert()
+# TypeError: '<' not supported between NoneType and int
+```
+
+**✅ Düzeltilmiş Kod**
+
+```python
+def process_sensor_data(reading):
+    # FIX: Null güvenli kontrol + sensör arıza alarmı
+    if reading is None or any(v is None for v in reading.values()):
+        log_sensor_fault(reading)
+        send_emergency_alert("sensor_failure")
+        return  # FR-08: Acil mod tetikle
+    if reading['soil_moisture'] < MOISTURE_THRESHOLD:
+        trigger_irrigation()
+    if reading['temperature'] > TEMP_ALERT_LIMIT:
+        send_emergency_alert("high_temp")
+```
+
+**🔗 İlgili Gereksinim:** FR-08 (Anormal durum tespiti → acil mod)
+
+---
+
+### 📡 BUG-002 — MQTT mesajları çevrimdışıyken buffer'a yazılmıyor
+x"
+**📝 Açıklama**
+
+İnternet bağlantısı kesildiğinde sensör okuma verileri hiçbir yere kaydedilmemekteydi. Bağlantı geri döndüğünde bu süre zarfındaki tüm ölçümler kaybolmakta, tarihsel trend analizi ve YZ modelinin eğitim verisi eksik kalmaktaydı.
+
+**❌ Hatalı Kod**
+
+```python
+def send_mqtt(topic, payload):
+    # BUG: Bağlantı yoksa veri düşürülüyor, buffer yok
+    try:
+        client.publish(topic, json.dumps(payload))
+    except ConnectionError:
+        pass  # Sessizce görmezden gel
+```
+
+**✅ Düzeltilmiş Kod**
+
+```python
+LOCAL_BUFFER_PATH = "/data/offline_buffer.json"
+
+def send_mqtt(topic, payload):
+    # FIX: Bağlantı yoksa yerel diske yaz
+    try:
+        client.publish(topic, json.dumps(payload))
+        flush_local_buffer()  # Bekleyen kayıtları gönder
+    except ConnectionError:
+        _write_to_local_buffer({
+            "topic": topic,
+            "payload": payload,
+            "timestamp": time.time()
+        })
+
+def flush_local_buffer():
+    # Bağlantı geldiğinde sıralı olarak gönder
+    if not os.path.exists(LOCAL_BUFFER_PATH):
+        return
+    with open(LOCAL_BUFFER_PATH, "r") as f:
+        buffered = json.load(f)
+    for record in buffered:
+        client.publish(record["topic"], json.dumps(record["payload"]))
+    os.remove(LOCAL_BUFFER_PATH)
+```
+
+**🔗 İlgili Gereksinim:** R-02 Risk (Bağlantı sorunlarında veri kaybı önleme)
+
+---
+
+### 🕒 BUG-003 — Veritabanı timestamp sorgusu yanlış zaman dilimi dönüyor
+
+**📝 Açıklama**
+
+Mobil uygulamada gösterilen son 30 günlük sensör verileri, sunucu UTC zamanıyla kaydedildiği ancak istemciye naive datetime olarak dönüldüğü için Türkiye yerel saatine göre **3 saat kaymaktaydı**. Çiftçiler gece sulamalarını gündüz yapılmış zannedebiliyordu.
+
+**❌ Hatalı SQL**
+
+```sql
+-- BUG: Timezone-aware olmayan sorgulama
+SELECT timestamp, soil_moisture
+FROM sensor_readings
+WHERE farm_id = %s
+  AND timestamp >= NOW() - INTERVAL '30 days'
+ORDER BY timestamp DESC;
+-- Dönen timestamp: 2026-03-14 03:00:00 (UTC naive)
+```
+
+**✅ Düzeltilmiş SQL**
+
+```sql
+-- FIX: UTC'den yerel zamana dönüşüm + AT TIME ZONE
+SELECT
+    timestamp AT TIME ZONE 'UTC'
+               AT TIME ZONE 'Europe/Istanbul' AS local_time,
+    soil_moisture,
+    temperature,
+    farm_id
+FROM sensor_readings
+WHERE farm_id = %s
+  AND timestamp >= NOW() - INTERVAL '30 days'
+ORDER BY local_time DESC;
+-- Dönen timestamp: 2026-03-14 06:00:00+03
+```
+
+**🔗 İlgili Gereksinim:** FR-04 (Tarih etiketiyle veri saklama), FR-09 (Mobil görüntüleme)
+
+---
+
+### 🌱 BUG-004 — YZ gübre tavsiyesi bitki evresi kontrolü yapmıyor
+
+**📝 Açıklama**
+
+FR-07 gereksiniminde belirtildiği üzere gübre tavsiyesi bitki gelişim evresine göre özelleştirilmeli. Ancak mevcut modül `plant_growth_stages` tablosunu hiç sorgulamıyordu; tüm bitkiler için aynı sabit NPK eşik değerleri kullanılıyordu. Bu durumda hasat dönemindeki bitkiye tohum dönemindeki doz uygulanabiliyordu.
+
+**❌ Hatalı Kod**
+
+```python
+def generate_fertilizer_advice(npk_reading, farm_id):
+    # BUG: Sabit eşikler, bitki evresine duyarsız
+    FIXED_N_THRESHOLD = 40  # mg/kg
+    if npk_reading['nitrogen'] < FIXED_N_THRESHOLD:
+        return "Azot takviyesi gerekli: 20 kg/dönüm Üre"
+```
+
+**✅ Düzeltilmiş Kod**
+
+```python
+def generate_fertilizer_advice(npk_reading, farm_id):
+    # FIX: plant_growth_stages tablosundan evreye özgü eşik çek
+    stage = db.query("""
+        SELECT growth_stage, n_threshold, p_threshold, k_threshold
+        FROM plant_growth_stages
+        WHERE farm_id = %s
+          AND %s BETWEEN stage_start AND stage_end
+    """, (farm_id, date.today())).fetchone()
+
+    if stage is None:
+        log_warning(f"Büyüme evresi bulunamadı: farm={farm_id}")
+        return None
+
+    advice = []
+    if npk_reading['nitrogen'] < stage['n_threshold']:
+        dose = calculate_dose('N', npk_reading, stage)
+        advice.append(
+            f"[{stage['growth_stage']}] Azot eksik: "
+            f"{dose:.1f} kg/dönüm Üre öneriliyor"
+        )
+    # P ve K kontrolleri benzer şekilde eklenmeli...
+    return advice if advice else None
+```
+
+**🔗 İlgili Gereksinim:** FR-07 (Gübre tavsiyesi), FR-03 (NPK ölçümü)
 
 ---
 
 ### 5️⃣ Miraç Özcan AĞCABAY
 **📱 Kullanıcı Arayüzü Geliştirmesi: Profil Sayfası Tasarımı ve Entegrasyonu**
+
 Kullanıcı profil sayfasının görsel tasarımını tamamlayarak mevcut sisteme entegrasyonunu ve bilgi güncelleme özelliklerini hazırlar.
+
+
+
+# 🌾 Akıllı Tarım Yönetim Sistemi: Çiftçi ve Yönetici Arayüzleri İşleyiş Akışı
+
+## 1. Web Tabanlı Yönetim Paneli (Sistem Yöneticisi)
+*Yöneticilerin veya mühendislerin, tarım operasyonlarını masaüstü bilgisayarlarından geniş bir ekranda, detaylı bir şekilde takip edip yönettikleri ana istasyon.*
+
+**İşleyiş Akışı ve Özellikler:**
+* **🎨 Dinamik Arayüz:** Kullanıcı paneli açtığında, özel CSS değişkenleri mimarisi sayesinde ister Aydınlık ister Karanlık (Dark/Light) modda çalışabilir. Tüm başlıklar ve uyarılar sayfa yenilenmeden tek tıkla Çok-Dilli (TR/EN) formata dönebilir.
+* **🔐 Kademeli Özelleştirme:** Form alanları (İsim, E-posta vb.) verinin korunması amacıyla varsayılan olarak kilitlidir. Yönetici, ancak "Profili Düzenle" butonuna basıp yetki aldığında verilerini güncelleyebilir.
+* **🛡️ Gelişmiş Güvenlik:** Panelde yerleşik bir güvenlik sekmesi bulunur. Sistem yöneticisi, hesabına yönelik İki Aşamalı Doğrulamayı (2FA) simüle edebilir, parola güncelleyebilir ve önceki giriş IP'sine/zamanına dayalı erişim loglarını inceleyebilir.
+* **⚡ Asenkron Veri İletimi:** Profil görseli değişikliğinden tutun, ayarların kaydedilmesine kadar ki tüm işlemler, veri tabanı bekleme süresini (örn. 800ms'lik sahte bekleme süresi) kullanıcıya `Promise` yapıları ile hissettirerek gerçekçi bir "Kaydediliyor..." deneyimi sunar.
+
+---
+
+## 2. Mobil Uygulama Modülü (Çiftçi / Saha Elemanı)
+*Saha operasyonlarının kalbi durumunda olan, çiftçilerin tarladayken telefonlarından anlık sensör uyarılarını aldıkları ve tarlalarını yönettikleri React Native tabanlı uygulama.*
+
+**İşleyiş Akışı ve Özellikler:**
+* **📱 Mobil Odaklı Etkileşim:** Masaüstü panele sadık kalınarak, mobil cihazlara özel Modal (Tam Ekran Pop-up) ve SafeArea (Güvenli Alan) mimarisi uygulanmıştır. i18n çevirileri ve karanlık ortam tasarımı mobilde de kayıpsız çalışır.
+* **📡 Canlı IoT (Sensör) Bildirimleri:** Çiftçi, ana ekranından o anki "Canlı IoT Paneli"ni açtığında, Türkiye geneli veya sorumlu olduğu arazilerdeki sıcaklık ve toprak nemi simülasyonunu anlık görüntüler. Suyun bitmesi gibi kritik bir metrik algılandığında, satır tamamen kırmızılaşarak çiftçiye uzaktan "Motoru Başlat" (sulama sistemini tetikleme) emri verme fırsatı tanır.
+* **📸 Telefondan Fiziksel Erişimler:** Çiftçi, profil görselini değiştirmek istediğinde standart web mantığı yerine cihazının donanımına inerek Native Kamera / Galeri fonksiyonlarını (`expo-image-picker`) tetikler. Ayrıca sistemdeki şehir bilgisine dayalı olarak cihazın donanımsal Haritasına (Google Maps vb.) otomatik atlayabilir.
+* **🔔 Anlık Alarm Sistemi:** Bildirim ikonu üzerinden açılan tepsi modülü; yaklaşan don uyarısı, sulama ihtiyacı gibi sahadaki gerçek zamanlı değişkenleri rapor olarak tutar.
+
+---
+
+## 3. Ortak Geliştirme Yaklaşımı (Proje Bütünlüğü)
+Her iki profilde de tamamen **"Erişilebilirlik"**, **"Hata Yönetimi"** ve **"Temiz Kod (Clean Code)"** felsefesi benimsenmiştir:
+
+1. **⚠️ Veri Uyuşmazlığı Koruması:** Web ve Mobilde aynı kullanıcı işlemleri (şifre doğrulama, boş alan bırakmama) sırasında hata alındığında gösterilen uyarı stili (kırmızı çerçeveler, popup mesajlar) platform fark etmeksizin aynı tasarım felsefesinden beslenir.
+2. **🔗 Mock-Backend Hazırlığı:** Projenin görsel yüzü bitmiş olmakla kalmayıp, arka taraftaki düğmeler gerçek bir API'a (MySQL / Python Flask vb.) bağlanmaya tam hazır şekilde `Promise` zincirleriyle sarmalanmıştır.
+3. **👥 Rol Yönetimi:** İki farklı arayüzdeki iki farklı sınıf (Çiftçi vs Yönetici), giriş esnasındaki verilere göre yetkilendirme (Bölgeleri görebilme, Motoru çalıştırabilme) mantığını net bir şekilde sergiler.
+
+---
+
+> **Sonuç olarak bu proje;** masaüstünde profesyonel yönetim ihtiyaçlarını karşılarken, mobilde ise tarlada ter döken bir çiftçinin ihtiyaç duyduğu IoT tetikleme ve bildirim mekanizmasını oldukça dinamik ve platformlar-arası (Cross-platform) bir mimari etrafında buluşturmaktadır.
