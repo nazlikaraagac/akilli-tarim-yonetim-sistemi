@@ -896,3 +896,52 @@ Her iki profilde de tamamen **"Erişilebilirlik"**, **"Hata Yönetimi"** ve **"T
 ---
 
 > **Sonuç olarak bu proje;** masaüstünde profesyonel yönetim ihtiyaçlarını karşılarken, mobilde ise tarlada ter döken bir çiftçinin ihtiyaç duyduğu IoT tetikleme ve bildirim mekanizmasını oldukça dinamik ve platformlar-arası (Cross-platform) bir mimari etrafında buluşturmaktadır.
+
+
+
+
+
+# 🚀 4. Hafta Görevleri ve Detaylar
+
+## 👤 1️⃣ Arda Yeşil
+**1) Sistem Entegrasyonu ve Test Planı Oluşturma 🔗**  
+Sensör veri toplama modülü, veri analiz sistemi, mobil uygulama ve web arayüzünün nasıl entegre edileceğini planlanır. Her bir modülün birbiriyle nasıl iletişim kuracağı ve veri alışverişi yapacağı belirlenir. Entegrasyon testleri için bir test planı oluşturulur. Test senaryolarını, test verilerini ve test ortamı tanımlanır.  
+
+**2) Proje Dokümantasyonu: API ve Veritabanı Entegrasyonu 📄**  
+Hafta 3'teki API tasarımını ve bu haftaki API entegrasyonunu detaylı bir şekilde dokümante edilir. Veritabanı şemasını ve API endpoint'lerini açıklayan teknik doküman oluşturulur.  
+
+---
+
+## 👤 2️⃣ Nazlı Karaağaç
+**1) Mobil Uygulama ve Web Arayüzü Kullanıcı Arayüzü (UI) ve Kullanıcı Deneyimi (UX) Tasarımı 🎨**  
+Çiftçiler için mobil uygulama ve yöneticiler için web arayüzü için kullanıcı dostu arayüzler tasarlanır. Her iki platformun da temel işlevlerini (veri görselleştirme, kontrol paneli, alarm yönetimi vb.) göz önünde bulundurulur. Kullanıcı senaryoları oluşturulur ve arayüz tasarımları bu senaryolara göre şekillendirilir. Arayüz tasarımları prototip olarak oluşturulur ve kullanıcı geri bildirimleri toplanır.  
+
+**2) Test Senaryoları Oluşturma ve Uygulama: Kullanıcı İşlemleri 🧪**  
+Hafta 3'te belirlenen kullanıcı hikayeleri için test senaryoları oluşturulur. Oluşturulan senaryoları kullanarak kullanıcı işlemlerinin (oluşturma, güncelleme, silme) testlerini gerçekleştirilir ve sonuçları raporlanır.  
+
+---
+
+## 👤 3️⃣ Birgül Göktürk
+**1) Makine Öğrenmesi Algoritmaları Araştırması ve Seçimi 🤖**  
+Sulama, gübreleme ve ilaçlama optimizasyonu için kullanılabilecek makine öğrenmesi algoritmaları (regresyon, sınıflandırma, kümeleme vb.) araştırılır. Her algoritmanın avantajlarını, dezavantajlarını ve veri gereksinimleri değerlendirilir. Proje gereksinimlerine en uygun algoritmaları belirlenir ve nedenlerini açıklayan bir rapor oluşturulur.  
+
+**2) API Entegrasyonu: Kullanıcı Kimlik Doğrulama (Authentication) 🔐**  
+Hafta 3'te tasarlanan API'ye kullanıcı kimlik doğrulama (authentication) entegrasyonu yapılır. Giriş, kayıt ve şifre sıfırlama işlevleri API üzerinden yönetilir.  
+
+---
+
+## 👤 4️⃣ Özgür Ulusoy
+**1) Veritabanı Tasarımı ve Veri Modeli Oluşturma 🗄️**  
+MySQL veritabanı için gerekli tablolar (sensör verileri, ürün bilgileri, kullanıcı bilgileri vb.) ve ilişkileri belirlenir. Her tablo için uygun veri tiplerini ve boyutları tanımlanır. Veri modelini oluştururken normalizasyon prensiplerine dikkat edilmesi gerekir. Veri güvenliği ve yedekleme stratejileri planlanır. Veritabanı şemasını ve veri modeli bir doküman halinde sunulur.  
+
+**2) Kullanıcı Arayüzü (UI) Geliştirmesi: Profil Sayfası 💻**  
+Hafta 3'teki UI tasarımına uygun olarak kullanıcı profil sayfası geliştirilir. Kullanıcının bilgilerini görüntüleme, düzenleme ve kaydetme işlevleri tamamlanır.  
+
+---
+
+## 👤 5️⃣ Miraç Özcan Ağcabay
+**1) IoT Sensörleri Veri Toplama Modülü Gereksinim Analizi 📡**  
+Kullanılacak IoT sensörlerinin (toprak nemi, sıcaklık, ışık vb.) veri formatlarını, iletişim protokollerini ve enerji tüketimleri detaylı olarak araştırılır. Toplanacak verilerin sıklığı, doğruluğu ve güvenilirliği ile ilgili gereksinimleri belirlenir. Bu gereksinimleri karşılayacak sensör teknolojilerini ve veri toplama yöntemleri değerlendirilir. Bulgular bir rapor halinde sunulur.  
+
+**2) Veritabanı Optimizasyonu ve Performans Testleri ⚡**  
+Hafta 3'te oluşturulan veritabanı şeması optimize edilir. Sorgu performansını artırmak için gerekli indekslemeler yapılır ve performans testleri ile sonuçları belgelenir.  
