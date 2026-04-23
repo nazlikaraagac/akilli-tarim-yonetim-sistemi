@@ -1581,6 +1581,9 @@ Hafta 3'teki UI tasarımına uygun olarak kullanıcı profil sayfası geliştiri
 Kullanılacak IoT sensörlerinin (toprak nemi, sıcaklık, ışık vb.) veri formatlarını, iletişim protokollerini ve enerji tüketimleri detaylı olarak araştırılır. Toplanacak verilerin sıklığı, doğruluğu ve güvenilirliği ile ilgili gereksinimleri belirlenir. Bu gereksinimleri karşılayacak sensör teknolojilerini ve veri toplama yöntemleri değerlendirilir. Bulgular bir rapor halinde sunulur.  
 
 
+**1) IoT Sensörleri Veri Toplama Modülü Gereksinim Analizi 📡**
+Kullanılacak IoT sensörlerinin (toprak nemi, sıcaklık, ışık vb.) veri formatlarını, iletişim protokollerini ve enerji tüketimleri detaylı olarak araştırılır. Toplanacak verilerin sıklığı, doğruluğu ve güvenilirliği ile ilgili gereksinimleri belirlenir. Bu gereksinimleri karşılayacak sensör teknolojilerini ve veri toplama yöntemleri değerlendirilir. Bulgular bir rapor halinde sunulur.
+
 # 📡 IoT Sensörleri Veri Toplama Modülü: Kapsamlı Gereksinim Analizi Raporu
 
 ## 1. Sensör Teknolojileri ve Donanım Seçimi
@@ -1627,47 +1630,49 @@ Toplanan verilerin gecikmesiz (low-latency) ve düşük ağ tüketimiyle iletilm
     "signal_strength_dbm": -65
   }
 }
+```
 
+---
 
-3. Veri Sıklığı, Doğruluğu ve Güvenilirliği
+## 3. Veri Sıklığı, Doğruluğu ve Güvenilirliği
+
 Sistemin verimli çalışması için dinamik bir veri toplama stratejisi belirlenmiştir:
 
-Dinamik Örnekleme Sıklığı: * Standart Durum: Sensörler her 30 dakikada bir uyanıp veri gönderir.
+* **Dinamik Örnekleme Sıklığı:** * **Standart Durum:** Sensörler her 30 dakikada bir uyanıp veri gönderir.
+  * **Aksiyon Durumu:** Sulama motorları veya fanlar çalıştığında sistem gerçek zamanlı tepki verebilmek için her 1 dakikada bir veri gönderimine başlar.
+* **Doğruluk ve Hata Filtreleme:** Sensörlerden gelen anlık hatalı ölçümleri engellemek için kontrolcü yazılımında **Hareketli Ortalama (Moving Average)** algoritması uygulanacaktır. Arka arkaya alınan 5 okumanın ortalaması sisteme iletilecektir.
+* **Güvenilirlik (Çevrimdışı Çalışma Desteği):** Tarım arazilerinde internet bağlantısı kopabileceği için, ESP32 üzerindeki flash bellekte veriler geçici olarak saklanacak, bağlantı geri geldiğinde sunucuya toplu olarak senkronize edilecektir.
 
-Aksiyon Durumu: Sulama motorları veya fanlar çalıştığında sistem gerçek zamanlı tepki verebilmek için her 1 dakikada bir veri gönderimine başlar.
+---
 
-Doğruluk ve Hata Filtreleme: Sensörlerden gelen anlık hatalı ölçümleri (örneğin sensörün üzerine su damlaması sonucu oluşan ani pikler) engellemek için kontrolcü yazılımında Hareketli Ortalama (Moving Average) algoritması uygulanacaktır. Arka arkaya alınan 5 okumanın ortalaması sisteme iletilecektir.
+## 4. Enerji Tüketimi ve Güç Yönetimi (Sürdürülebilirlik)
 
-Güvenilirlik (Çevrimdışı Çalışma Desteği): Tarım arazilerinde internet bağlantısı kopabileceği için, ESP32 üzerindeki flash bellekte (veya eklenecek bir SD modülünde) veriler geçici olarak saklanacak (datalogger mantığı), bağlantı geri geldiğinde sunucuya toplu olarak senkronize edilecektir.
-
-4. Enerji Tüketimi ve Güç Yönetimi (Sürdürülebilirlik)
 Açık alanda çalışacak sistemin şebeke elektriğine bağımlı olmaması kritik bir gereksinimdir.
 
-Güç Kaynağı: Sistem 18650 tipi 3.7V 3000mAh Li-ion batarya ile beslenecek ve bu batarya TP4056 şarj modülü üzerinden 6V 1W'lık mini bir monokristal güneş paneli ile sürekli şarj edilecektir.
+* **Güç Kaynağı:** Sistem 18650 tipi 3.7V 3000mAh Li-ion batarya ile beslenecek ve bu batarya TP4056 şarj modülü üzerinden 6V 1W'lık mini bir monokristal güneş paneli ile sürekli şarj edilecektir.
+* **Deep Sleep (Derin Uyku) Modu:** ESP32 sürekli açık kalırsa bataryayı 1 gün içinde tüketir. Veri gönderimi yapıldıktan sonra kontrolcü uyku moduna geçirilecektir.
+  * **Aktif tüketim:** ~200 mA (5 saniye)
+  * **Uyku tüketimi:** ~10 µA (30 dakika)
 
-Deep Sleep (Derin Uyku) Modu: ESP32 sürekli açık kalırsa bataryayı 1 gün içinde tüketir. Veri gönderimi (yaklaşık 5 saniye) yapıldıktan sonra kontrolcü Deep Sleep moduna geçirilecektir.
+> **Sonuç:** Bu mimari ile güneş enerjisi olmasa dahi batarya aylar boyunca sistemi ayakta tutabilir. Güneş paneli ile sistemin teorik olarak ömür boyu kapanmadan çalışması hedeflenmektedir.
 
-Aktif tüketim: ~200 mA (5 saniye)
+---
+<br>
 
-Uyku tüketimi: ~10 µA (30 dakika)
-
-Sonuç: Bu mimari ile güneş enerjisi olmasa dahi batarya aylar boyunca sistemi ayakta tutabilir. Güneş paneli ile sistemin teorik olarak ömür boyu kapanmadan çalışması hedeflenmektedir.
-
-
-**2) Veritabanı Optimizasyonu ve Performans Testleri ⚡**  
-Hafta 3'te oluşturulan veritabanı şeması optimize edilir. Sorgu performansını artırmak için gerekli indekslemeler yapılır ve performans testleri ile sonuçları belgelenir. 
+**2) Veritabanı Optimizasyonu ve Performans Testleri ⚡**
+Hafta 3'te oluşturulan veritabanı şeması optimize edilir. Sorgu performansını artırmak için gerekli indekslemeler yapılır ve performans testleri ile sonuçları belgelenir.
 
 # 🚀 Görev Raporu: Veritabanı Optimizasyonu ve Performans Testleri
 
 ## 1. Giriş ve Mevcut Durum Analizi
 
-Akıllı Tarım Yönetim Sistemi (ATYS) projesinin 3. haftasında oluşturulan veritabanı mimarisinde, IoT sensörlerinden gelen verilerin `sensor_readings` adlı tabloda toplandığı belirtilmiştir. Zamanla artacak veri yükü (milyonlarca satır) göz önüne alındığında, mevcut şemanın depolama maliyetleri ve arama (SELECT) gecikmeleri açısından optimize edilmesine ihtiyaç duyulmuştur.
+Akıllı Tarım Yönetim Sistemi (ATYS) projesinin 3. haftasında oluşturulan veritabanı mimarisinde, IoT sensörlerinden gelen verilerin `sensor_readings` adlı tabloda toplandığı belirtilmiştir. Zamanla artacak veri yükü göz önüne alındığında, mevcut şemanın depolama maliyetleri ve arama (SELECT) gecikmeleri açısından optimize edilmesine ihtiyaç duyulmuştur.
 
 ---
 
 ## 2. Veritabanı Şeması Optimizasyonu
 
-Mevcut şema üzerinde depolama alanını optimize etmek ve disk I/O (Okuma/Yazma) işlemlerini hızlandırmak amacıyla veri tiplerinde daraltmaya gidilmiştir.
+Mevcut şema üzerinde depolama alanını optimize etmek ve disk I/O işlemlerini hızlandırmak amacıyla veri tiplerinde daraltmaya gidilmiştir.
 
 **Optimize Edilmiş Tablo Şeması:**
 ```sql
@@ -1678,16 +1683,71 @@ CREATE TABLE sensor_readings (
     temperature REAL,                   -- DOUBLE yerine REAL 
     timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+```
 
-Yapılan İyileştirmeler:farm_id sütunu INTEGER (4 byte) yerine SMALLINT (2 byte) yapılmıştır. Bu, 32.767 adet çiftlik kapasitesi sunarak projenin gereksinimlerini fazlasıyla karşılar.Sensör verileri (nem, sıcaklık vb.) yüksek hassasiyetli DOUBLE PRECISION (8 byte) yerine REAL (4 byte) olarak güncellenmiştir.💡 Kazanım: Bu şema optimizasyonu ile her bir satırda yaklaşık 10 byte tasarruf sağlanmıştır. 1 milyon satırlık veride bu, depolama ve RAM kullanımında yaklaşık 10 MB'lık doğrudan bir kazanç anlamına gelir.3. İndeksleme (Indexing) UygulamalarıHafta 3 analizinde tespit edilen sorunlu sorguya yönelik gerekli indeksleme işlemleri uygulanmıştır.Sorunlu Sorgu:SQLSELECT * FROM sensor_readings WHERE farm_id = 12 AND timestamp >= NOW() - INTERVAL '30 days';
-Çözüm ve Uygulanan İndeks:Mobil uygulama ve web paneli genellikle belirli bir tarlanın (farm_id) belirli bir zaman aralığındaki (timestamp) verilerini çektiği için, bu iki sütunu kapsayan bir B-Tree Composite Index (Bileşik İndeks) oluşturulmuştur. Son verilerin daha hızlı çekilmesi için tarih sütununa DESC (azalan) sıralama eklenmiştir.SQLCREATE INDEX idx_farm_timestamp ON sensor_readings (farm_id, timestamp DESC);
-4. Performans Testleri ve Sonuçların BelgelenmesiYapılan şema ve indeksleme optimizasyonlarının başarısını ölçmek amacıyla, PostgreSQL veritabanına 1.000.000 (1 Milyon) satırlık test (mock) sensör verisi eklenerek performans testleri gerçekleştirilmiştir.4.1. Test MetodolojisiVeri Seti: Rastgele üretilmiş 1.000.000 satır sensör kaydı.Test Aracı: PostgreSQL EXPLAIN ANALYZE komutu.Test Edilen İşlem: 12 numaralı çiftliğin son 30 güne ait verilerinin zamana göre sıralanarak (en yeniden en eskiye) getirilmesi.Optimize Edilmiş Test Sorgusu:SQLSELECT timestamp, soil_moisture, temperature 
+**Yapılan İyileştirmeler:**
+* `farm_id` sütunu `INTEGER` (4 byte) yerine `SMALLINT` (2 byte) yapılmıştır. Bu, 32.767 adet çiftlik kapasitesi sunarak projenin gereksinimlerini fazlasıyla karşılar.
+* Sensör verileri (nem, sıcaklık vb.) yüksek hassasiyetli `DOUBLE PRECISION` (8 byte) yerine `REAL` (4 byte) olarak güncellenmiştir.
+
+> **💡 Kazanım:** Bu şema optimizasyonu ile her bir satırda yaklaşık **10 byte** tasarruf sağlanmıştır. 1 milyon satırlık veride bu, depolama ve RAM kullanımında yaklaşık **10 MB'lık doğrudan bir kazanç** anlamına gelir.
+
+---
+
+## 3. İndeksleme (Indexing) Uygulamaları
+
+Hafta 3 analizinde tespit edilen sorunlu sorguya yönelik gerekli indeksleme işlemleri uygulanmıştır.
+
+**Sorunlu Sorgu:**
+```sql
+SELECT * FROM sensor_readings WHERE farm_id = 12 AND timestamp >= NOW() - INTERVAL '30 days';
+```
+
+**Çözüm ve Uygulanan İndeks:**
+Mobil uygulama ve web paneli genellikle belirli bir tarlanın belirli bir zaman aralığındaki verilerini çektiği için, bu iki sütunu kapsayan bir **B-Tree Composite Index (Bileşik İndeks)** oluşturulmuştur. Son verilerin daha hızlı çekilmesi için tarih sütununa `DESC` (azalan) sıralama eklenmiştir.
+
+```sql
+CREATE INDEX idx_farm_timestamp ON sensor_readings (farm_id, timestamp DESC);
+```
+
+---
+
+## 4. Performans Testleri ve Sonuçların Belgelenmesi
+
+Yapılan şema ve indeksleme optimizasyonlarının başarısını ölçmek amacıyla, PostgreSQL veritabanına **1.000.000 (1 Milyon)** satırlık test (mock) sensör verisi eklenerek performans testleri gerçekleştirilmiştir.
+
+### 4.1. Test Metodolojisi
+* **Veri Seti:** Rastgele üretilmiş 1.000.000 satır sensör kaydı.
+* **Test Aracı:** PostgreSQL `EXPLAIN ANALYZE` komutu.
+* **Test Edilen İşlem:** 12 numaralı çiftliğin son 30 güne ait verilerinin zamana göre sıralanarak getirilmesi.
+
+**Optimize Edilmiş Test Sorgusu:**
+```sql
+SELECT timestamp, soil_moisture, temperature 
 FROM sensor_readings 
 WHERE farm_id = 12 AND timestamp >= NOW() - INTERVAL '30 days' 
 ORDER BY timestamp DESC;
-4.2. Test Sonuçları Karşılaştırma TablosuTest DurumuTarama Yöntemi (Scan Type)Yürütme Süresiİşlenen Veri / Davranışİndeks ÖncesiSeq Scan (Sıralı Tarama)~ 340.50 msVeritabanı 1 milyon satırın tamamını baştan sona okumak zorunda kaldı. Yüksek CPU ve RAM kullanımı.İndeks SonrasıIndex Scan (İndeks Taraması)~ 4.15 msVeritabanı sadece indeksi kullanarak doğrudan ilgili satırlara ulaştı.4.3. EXPLAIN ANALYZE Çıktısı (Belgeleme)İndeksleme sonrası veritabanının davranışını gösteren kanıt niteliğindeki motor çıktısı aşağıdadır:PlaintextIndex Scan using idx_farm_timestamp on sensor_readings  (cost=0.42..15.68 rows=750 width=12) (actual time=0.034..4.150 rows=720 loops=1)
+```
+
+### 4.2. Test Sonuçları Karşılaştırma Tablosu
+
+| Test Durumu | Tarama Yöntemi (Scan Type) | Yürütme Süresi | İşlenen Veri / Davranış |
+| :--- | :--- | :--- | :--- |
+| **İndeks Öncesi** | `Seq Scan` (Sıralı Tarama) | **~ 340.50 ms** | Veritabanı 1 milyon satırın tamamını okudu. Yüksek CPU ve RAM kullanımı. |
+| **İndeks Sonrası** | `Index Scan` (İndeks Taraması) | **~ 4.15 ms** | Veritabanı sadece indeksi kullanarak doğrudan ilgili satırlara ulaştı. |
+
+### 4.3. EXPLAIN ANALYZE Çıktısı (Belgeleme)
+
+```text
+Index Scan using idx_farm_timestamp on sensor_readings  (cost=0.42..15.68 rows=750 width=12) (actual time=0.034..4.150 rows=720 loops=1)
   Index Cond: ((farm_id = 12) AND ("timestamp" >= (now() - '30 days'::interval)))
 Planning Time: 0.185 ms
 Execution Time: 4.150 ms
-5. Sonuç ve DeğerlendirmeVeri tiplerinin daraltılmasıyla sistemin disk/bellek ayak izi küçültülmüştür.Uygulanan idx_farm_timestamp bileşik indeksi ve sorgulardaki SELECT * kullanımının bırakılıp sadece gerekli sütunların çağrılması (Query Refactoring) sayesinde, sorgu yanıt süresi 340 milisaniyeden 4 milisaniyeye düşürülmüştür.Performansta elde edilen %98'lik hızlanma, ATYS mobil uygulamasının veri yükleme sürelerini (loading time) minimize etmiş ve sistemin eşzamanlı kullanıcı (çiftçi) yükünü kaldırabilir hale gelmesini sağlamıştır. 
+```
 
+---
+
+## 5. Sonuç ve Değerlendirme
+
+1. Veri tiplerinin daraltılmasıyla sistemin disk/bellek ayak izi küçültülmüştür.
+2. Uygulanan `idx_farm_timestamp` bileşik indeksi ve sadece gerekli sütunların çağrılması sayesinde, sorgu yanıt süresi **340 milisaniyeden 4 milisaniyeye** düşürülmüştür.
+3. Performansta elde edilen **%98'lik hızlanma**, ATYS mobil uygulamasının veri yükleme sürelerini minimize etmiş ve sistemin eşzamanlı çiftçi yükünü kaldırabilir hale gelmesini sağlamıştır.
