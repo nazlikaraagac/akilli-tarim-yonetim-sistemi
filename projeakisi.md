@@ -1344,6 +1344,64 @@ Bu API yapısı, sistemin **modüler**, **ölçeklenebilir** ve **bakımı kolay
 **2) Test Senaryoları Oluşturma ve Uygulama: Kullanıcı İşlemleri 🧪**  
 Hafta 3'te belirlenen kullanıcı hikayeleri için test senaryoları oluşturulur. Oluşturulan senaryoları kullanarak kullanıcı işlemlerinin (oluşturma, güncelleme, silme) testlerini gerçekleştirilir ve sonuçları raporlanır.  
 
+
+**🧪 Test Senaryoları Geliştirme: Kullanıcı İşlemleri Test Raporu**
+
+| 📋 Bilgi | 📝 Detay |
+|---|---|
+| **Kapsam** | Kullanıcı Oluşturma · Güncelleme · Silme · Giriş |
+| **İlgili Gereksinimler** | FR-08, FR-09 |
+| **İlgili Tablo** | `users` |
+
+---
+
+#### 1. 📋 Kullanıcı Hikayeleri
+
+| 🆔 | 👤 Aktör | 📝 İstek | 🎯 Amaç |
+|---|---|---|---|
+| UH-01 | Çiftçi | Sisteme yeni hesap oluşturmak istiyorum | Tarla verilerimi takip edebilmek için giriş yapabileyim |
+| UH-02 | Çiftçi | Profil bilgilerimi güncellemek istiyorum | Ad, telefon ve tarla bilgilerimi güncel tutabileyim |
+| UH-03 | Çiftçi | Hesabımı silmek istiyorum | Kişisel verilerimin sistemden kaldırılmasını istiyorum |
+| UH-04 | Ziraat Mühendisi | Geçersiz bilgiyle kayıt yapılamamalı | Sistem tutarsız verilerle kirlenmesin |
+| UH-05 | Yönetici | Yetkisiz kullanıcı giriş yapamamalı | Sistem güvenliği korunsun |
+
+---
+
+#### 2. 🧪 Test Senaryoları ve Sonuçlar
+
+| 🆔 | İşlem | Senaryo | Test Verisi / Koşul | Beklenen Sonuç | Durum |
+|---|---|---|---|---|---|
+| TS-C01 | CREATE | Başarılı kayıt | Geçerli ad, e-posta, şifre, rol | Kullanıcı `users`'a eklenir, giriş ekranına yönlendirilir | ✅ |
+| TS-C02 | CREATE | Kayıtlı e-posta ile tekrar kayıt | `ahmet@tarim.com` zaten mevcut | `"Bu e-posta zaten kullanılıyor."` hatası, kayıt gerçekleşmez | ✅ |
+| TS-C03 | CREATE | Zorunlu alan boş | Ad alanı boş bırakılmış | Form doğrulama hatası, kayıt gerçekleşmez | ✅ |
+| TS-C04 | CREATE | Zayıf şifre (sınır durumu) | Şifre: `123` | `"Şifre en az 8 karakter, 1 büyük harf ve 1 özel karakter içermeli."` uyarısı | ✅ |
+| TS-U01 | UPDATE | Başarılı profil güncelleme | Telefon: `0532 111 22 33` → `0542 999 88 77` | `phone` sütunu güncellenir, başarı mesajı gösterilir | ✅ |
+| TS-U02 | UPDATE | Başkasına ait e-postayla güncelleme | Yeni e-posta başka hesaba ait | `"Bu e-posta başka bir hesaba ait."` hatası, güncelleme gerçekleşmez | ✅ |
+| TS-U03 | UPDATE | Geçersiz telefon formatı (sınır durumu) | Telefon: `abcdef` | `"Lütfen geçerli bir telefon numarası girin."` uyarısı | ✅ |
+| TS-D01 | DELETE | Başarılı hesap silme | Kullanıcı onayı verildi | Kayıt `users`'dan kaldırılır, oturum sonlandırılır | ✅ |
+| TS-D02 | DELETE | Onay vermeden silme iptali | Onay kutusunda "İptal" seçildi | İşlem gerçekleşmez, kullanıcı profil sayfasında kalır | ✅ |
+| TS-D03 | DELETE | Yetkisiz hesap silme (güvenlik) | Çiftçi rolü, farklı `user_id` ile DELETE isteği | `403 Forbidden` döner, işlem gerçekleşmez | ✅ |
+| TS-L01 | LOGIN | Başarılı giriş | Geçerli e-posta ve şifre | Oturum açılır, Dashboard'a yönlendirilir | ✅ |
+| TS-L02 | LOGIN | Yanlış şifreyle giriş | Doğru e-posta, yanlış şifre | `"E-posta veya şifre hatalı."` mesajı, giriş reddedilir | ✅ |
+| TS-L03 | LOGIN | Kayıtsız e-postayla giriş | Sistemde olmayan e-posta | `"E-posta veya şifre hatalı."` mesajı | ✅ |
+
+---
+
+#### 3. 📊 Sonuç Özeti
+
+| Test Grubu | Toplam | ✅ Geçti | ❌ Başarısız |
+|---|---|---|---|
+| Oluşturma (CREATE) | 4 | 4 | 0 |
+| Güncelleme (UPDATE) | 3 | 3 | 0 |
+| Silme (DELETE) | 3 | 3 | 0 |
+| Giriş (LOGIN) | 3 | 3 | 0 |
+| **TOPLAM** | **13** | **13** | **0** |
+
+Tüm senaryolar başarıyla tamamlanmıştır. FR-09 kapsamındaki profil işlemleri
+ve FR-08 kapsamındaki yetkisiz erişim koruması (TS-D03) doğrulandı. Miraç
+Ağcabay'ın geliştirdiği profil sayfası tüm senaryolarda beklenen davranışı
+sergiledi.
+
 ---
 
 ## 👤 3️⃣ Birgül Göktürk
