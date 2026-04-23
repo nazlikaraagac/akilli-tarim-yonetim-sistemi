@@ -1581,8 +1581,6 @@ Hafta 3'teki UI tasarımına uygun olarak kullanıcı profil sayfası geliştiri
 Kullanılacak IoT sensörlerinin (toprak nemi, sıcaklık, ışık vb.) veri formatlarını, iletişim protokollerini ve enerji tüketimleri detaylı olarak araştırılır. Toplanacak verilerin sıklığı, doğruluğu ve güvenilirliği ile ilgili gereksinimleri belirlenir. Bu gereksinimleri karşılayacak sensör teknolojilerini ve veri toplama yöntemleri değerlendirilir. Bulgular bir rapor halinde sunulur.  
 
 
-**1) IoT Sensörleri Veri Toplama Modülü Gereksinim Analizi 📡**
-Kullanılacak IoT sensörlerinin (toprak nemi, sıcaklık, ışık vb.) veri formatlarını, iletişim protokollerini ve enerji tüketimleri detaylı olarak araştırılır. Toplanacak verilerin sıklığı, doğruluğu ve güvenilirliği ile ilgili gereksinimleri belirlenir. Bu gereksinimleri karşılayacak sensör teknolojilerini ve veri toplama yöntemleri değerlendirilir. Bulgular bir rapor halinde sunulur.
 
 # 📡 IoT Sensörleri Veri Toplama Modülü: Kapsamlı Gereksinim Analizi Raporu
 
