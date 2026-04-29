@@ -51,7 +51,16 @@ const translations = {
         "admin_role_text": "Sistem Yöneticisi",
         "loading_login": "Giriş bilgileri yükleniyor...",
         "nav_logout": "Çıkış Yap",
-        "alert_logout": "Başarıyla çıkış yapıldı. Yönlendiriliyorsunuz..."
+        "alert_logout": "Başarıyla çıkış yapıldı. Yönlendiriliyorsunuz...",
+        "label_phone": "Telefon",
+        "label_city": "Şehir",
+        "btn_cancel": "İptal",
+        "alert_empty_fields": "Lütfen tüm alanları doldurun!",
+        "alert_invalid_email": "Geçerli bir e-posta adresi girin!",
+        "alert_cancel": "Değişiklikler iptal edildi.",
+        "alert_pwd_min_length": "Yeni şifre en az 8 karakter olmalıdır!",
+        "alert_pwd_empty": "Lütfen tüm şifre alanlarını doldurun!",
+        "hint_min_pwd": "En az 8 karakter olmalıdır."
     },
     'en': {
         "head_title": "Admin Profile",
@@ -105,7 +114,16 @@ const translations = {
         "admin_role_text": "System Administrator",
         "loading_login": "Loading login info...",
         "nav_logout": "Logout",
-        "alert_logout": "Logged out successfully. Redirecting..."
+        "alert_logout": "Logged out successfully. Redirecting...",
+        "label_phone": "Phone",
+        "label_city": "City",
+        "btn_cancel": "Cancel",
+        "alert_empty_fields": "Please fill in all fields!",
+        "alert_invalid_email": "Please enter a valid email address!",
+        "alert_cancel": "Changes cancelled.",
+        "alert_pwd_min_length": "New password must be at least 8 characters!",
+        "alert_pwd_empty": "Please fill in all password fields!",
+        "hint_min_pwd": "Must be at least 8 characters."
     }
 };
 
@@ -174,6 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     id: 101,
                     fullName: 'Miraç Özcan Ağcabay',
                     email: 'mirac@smartagri.com',
+                    phone: '0530 111 2233',
+                    city: 'Elazığ',
                     role: 'Sistem Yöneticisi', // Bu JS ile ekrana çevrilerek yansıtılacak
                     profileImageUrl: 'https://ui-avatars.com/api/?name=Mirac+Ozcan+Agcabay&background=10B981&color=fff',
                     notifications: { email: true, sms: false, app: true },
@@ -192,6 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('fullName').value = userData.fullName;
             document.getElementById('emailAddr').value = userData.email;
             document.getElementById('adminRole').value = t('admin_role_text');
+            document.getElementById('phoneNumber').value = userData.phone || '';
+            document.getElementById('userCity').value = userData.city || '';
             
             document.getElementById('mainProfileImg').src = userData.profileImageUrl;
             document.getElementById('headerProfileImg').src = userData.profileImageUrl;
@@ -219,10 +241,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     loadProfileData();
 
-    // --- 3. PROFİL BİLGİLERİNİ GÜNCELLEME ---
+    // --- 3. PROFİL BİLGİLERİNİ GÜNCELLEME (Hafta 4 - Doğrulama + İptal + Toast Eklendi) ---
     const profileForm = document.getElementById('profileForm');
+    const editableProfileFields = ['fullName', 'emailAddr', 'phoneNumber', 'userCity'];
+    let profileBackup = {}; // İptal için yedek veriler
+
     profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // --- Doğrulama: Boş alan kontrolü ---
+        let hasEmptyField = false;
+        editableProfileFields.forEach(id => {
+            const input = document.getElementById(id);
+            input.classList.remove('input-error');
+            if (!input.value.trim()) {
+                input.classList.add('input-error');
+                hasEmptyField = true;
+            }
+        });
+        if (hasEmptyField) {
+            showToast(t('alert_empty_fields'), 'error');
+            return;
+        }
+
+        // --- Doğrulama: Geçerli email formatı kontrolü ---
+        const emailInput = document.getElementById('emailAddr');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value.trim())) {
+            emailInput.classList.add('input-error');
+            showToast(t('alert_invalid_email'), 'error');
+            return;
+        }
 
         const btn = document.getElementById('saveProfileBtn');
         const originalText = btn.textContent;
@@ -231,7 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = {
             fullName: document.getElementById('fullName').value,
-            email: document.getElementById('emailAddr').value
+            email: document.getElementById('emailAddr').value,
+            phone: document.getElementById('phoneNumber').value,
+            city: document.getElementById('userCity').value
         };
 
         try {
@@ -240,6 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let savedData = JSON.parse(localStorage.getItem('mockProfileData'));
             savedData.fullName = formData.fullName;
             savedData.email = formData.email;
+            savedData.phone = formData.phone;
+            savedData.city = formData.city;
             
             if (tempRemovePhoto) {
                 const newName = formData.fullName.replace(/ /g, '+');
@@ -256,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tempProfileBase64 = null;
             tempRemovePhoto = false;
 
+            showToast(t('alert_save_success'), 'success');
             showAlert(t('alert_save_success'), "success");
             
             document.getElementById('headerProfileImg').src = savedData.profileImageUrl;
@@ -264,12 +318,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const photoActionsBox = document.getElementById('photoActionsBox');
             if (photoActionsBox) photoActionsBox.classList.add('hidden');
             
-            document.getElementById('fullName').setAttribute('readonly', 'true');
-            document.getElementById('emailAddr').setAttribute('readonly', 'true');
+            // Tüm düzenlenebilir alanları readonly yap ve editing stilini kaldır
+            editableProfileFields.forEach(id => {
+                const input = document.getElementById(id);
+                input.setAttribute('readonly', 'true');
+                input.classList.remove('editing-active', 'input-error');
+            });
             document.getElementById('enableEditBtn').classList.remove('hidden');
             document.getElementById('saveProfileBtn').classList.add('hidden');
+            document.getElementById('cancelEditBtn').classList.add('hidden');
 
         } catch (error) {
+            showToast(t('alert_save_error'), 'error');
             showAlert(t('alert_save_error'), "error");
         } finally {
             btn.textContent = originalText;
@@ -278,14 +338,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const enableEditBtn = document.getElementById('enableEditBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
     const fullNameInput = document.getElementById('fullName');
     const emailAddrInput = document.getElementById('emailAddr');
+    const phoneInput = document.getElementById('phoneNumber');
+    const cityInput = document.getElementById('userCity');
     const saveProfileBtn = document.getElementById('saveProfileBtn');
 
     if (enableEditBtn) {
         enableEditBtn.addEventListener('click', () => {
-            fullNameInput.removeAttribute('readonly');
-            emailAddrInput.removeAttribute('readonly');
+            // Mevcut değerleri yedekle (İptal için)
+            editableProfileFields.forEach(id => {
+                profileBackup[id] = document.getElementById(id).value;
+            });
+
+            // Alanları düzenlenebilir yap
+            editableProfileFields.forEach(id => {
+                const input = document.getElementById(id);
+                input.removeAttribute('readonly');
+                input.classList.add('editing-active');
+            });
             fullNameInput.focus();
             
             const photoActionsBox = document.getElementById('photoActionsBox');
@@ -293,8 +365,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             enableEditBtn.classList.add('hidden');
             saveProfileBtn.classList.remove('hidden');
+            cancelEditBtn.classList.remove('hidden');
         });
     }
+
+    // --- İPTAL BUTONU (Hafta 4 Ekleme) ---
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', () => {
+            // Eski değerlere geri dön
+            editableProfileFields.forEach(id => {
+                const input = document.getElementById(id);
+                input.value = profileBackup[id] || input.value;
+                input.setAttribute('readonly', 'true');
+                input.classList.remove('editing-active', 'input-error');
+            });
+
+            const photoActionsBox = document.getElementById('photoActionsBox');
+            if (photoActionsBox) photoActionsBox.classList.add('hidden');
+
+            tempProfileBase64 = null;
+            tempRemovePhoto = false;
+
+            // Fotoğrafı eski haline geri al
+            let savedData = JSON.parse(localStorage.getItem('mockProfileData'));
+            if (savedData && savedData.profileImageUrl) {
+                document.getElementById('mainProfileImg').src = savedData.profileImageUrl;
+            }
+
+            enableEditBtn.classList.remove('hidden');
+            saveProfileBtn.classList.add('hidden');
+            cancelEditBtn.classList.add('hidden');
+
+            showToast(t('alert_cancel'), 'error');
+        });
+    }
+
+    // Focus olunca hata stilini kaldır
+    editableProfileFields.forEach(id => {
+        document.getElementById(id).addEventListener('focus', function() {
+            this.classList.remove('input-error');
+        });
+    });
 
     // --- 4. ŞİFRE DEĞİŞTİRME MANTIĞI ---
     const passwordForm = document.getElementById('passwordForm');
@@ -325,8 +436,27 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const currentPwInput = document.getElementById('currentPassword');
+        const currentPwVal = currentPwInput.value;
+        const newPwVal = newPassword.value;
+        const confirmPwVal = confirmPassword.value;
+
+        // Boş alan kontrolü (Hafta 4 Ekleme)
+        if (!currentPwVal || !newPwVal || !confirmPwVal) {
+            showToast(t('alert_pwd_empty'), 'error');
+            return;
+        }
+
+        // Minimum uzunluk kontrolü (Hafta 4 Ekleme)
+        if (newPwVal.length < 8) {
+            newPassword.style.borderColor = 'var(--error)';
+            showToast(t('alert_pwd_min_length'), 'error');
+            return;
+        }
+
         if (newPassword.value !== confirmPassword.value) {
             checkPasswords();
+            showToast(t('error_pwd_match'), 'error');
             return;
         }
 
@@ -336,8 +466,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
 
         const passwordData = {
-            currentPassword: document.getElementById('currentPassword').value,
-            newPassword: newPassword.value
+            currentPassword: currentPwVal,
+            newPassword: newPwVal
         };
 
         try {
@@ -345,6 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentStoredPassword = savedData.currentPassword || 'password123';
             
             if (passwordData.currentPassword !== currentStoredPassword) {
+                 showToast(t('alert_pwd_curr_error'), 'error');
                  showAlert(t('alert_pwd_curr_error'), "error");
                  btn.textContent = originalText;
                  btn.disabled = false;
@@ -356,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
             savedData.currentPassword = passwordData.newPassword;
             localStorage.setItem('mockProfileData', JSON.stringify(savedData));
 
+            showToast(t('alert_pwd_success'), 'success');
             showAlert(t('alert_pwd_success'), "success");
             
             passwordForm.reset();
@@ -363,6 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmPassword.style.borderColor = '';
 
         } catch (error) {
+            showToast(t('alert_pwd_fail'), 'error');
             showAlert(t('alert_pwd_fail'), "error");
         } finally {
             btn.textContent = originalText;
@@ -417,6 +550,33 @@ document.addEventListener('DOMContentLoaded', () => {
         alertTimeout = setTimeout(() => {
             alertBox.classList.add('hidden');
         }, 3000);
+    }
+
+    // --- TOAST BİLDİRİM SİSTEMİ (Hafta 4 Ekleme) ---
+    function showToast(message, type) {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        const iconClass = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+        toast.innerHTML = `
+            <span class="toast-icon"><i class="fa-solid ${iconClass}"></i></span>
+            <span>${message}</span>
+            <button class="toast-close"><i class="fa-solid fa-xmark"></i></button>
+        `;
+
+        container.appendChild(toast);
+
+        const closeBtn = toast.querySelector('.toast-close');
+        const removeToast = () => {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+        };
+
+        closeBtn.addEventListener('click', removeToast);
+        setTimeout(removeToast, 3500);
     }
 
     // --- TEMA GEÇİŞİ ---

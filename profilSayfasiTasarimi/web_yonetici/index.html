@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
     <div class="dashboard-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
@@ -109,13 +111,25 @@
                                         <input type="email" id="emailAddr" name="emailAddr" class="form-control" readonly required>
                                     </div>
                                     <div class="form-group">
+                                        <label for="phoneNumber" data-i18n="label_phone">Telefon</label>
+                                        <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" readonly required>
+                                    </div>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
                                         <label for="adminRole" data-i18n="label_role">Yönetici Rolü</label>
                                         <input type="text" id="adminRole" name="adminRole" class="form-control bg-disabled" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="userCity" data-i18n="label_city">Şehir</label>
+                                        <input type="text" id="userCity" name="userCity" class="form-control" readonly required>
                                     </div>
                                 </div>
 
                                 <div class="form-actions">
                                     <button type="button" class="btn btn-outline" id="enableEditBtn" data-i18n="btn_edit_profile">Profili Düzenle</button>
+                                    <button type="button" class="btn btn-cancel hidden" id="cancelEditBtn" data-i18n="btn_cancel">İptal</button>
                                     <button type="submit" class="btn btn-primary hidden" id="saveProfileBtn" data-i18n="btn_save_changes">Değişiklikleri Kaydet</button>
                                 </div>
                             </form>
@@ -183,6 +197,7 @@
                                 <div class="form-group">
                                     <label for="newPassword" data-i18n="label_new_pwd">Yeni Şifre</label>
                                     <input type="password" id="newPassword" name="newPassword" class="form-control" required minlength="8">
+                                    <small class="hint-text" data-i18n="hint_min_pwd">En az 8 karakter olmalıdır.</small>
                                 </div>
 
                                 <div class="form-group">
