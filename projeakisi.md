@@ -1749,3 +1749,16 @@ Execution Time: 4.150 ms
 1. Veri tiplerinin daraltılmasıyla sistemin disk/bellek ayak izi küçültülmüştür.
 2. Uygulanan `idx_farm_timestamp` bileşik indeksi ve sadece gerekli sütunların çağrılması sayesinde, sorgu yanıt süresi **340 milisaniyeden 4 milisaniyeye** düşürülmüştür.
 3. Performansta elde edilen **%98'lik hızlanma**, ATYS mobil uygulamasının veri yükleme sürelerini minimize etmiş ve sistemin eşzamanlı çiftçi yükünü kaldırabilir hale gelmesini sağlamıştır.
+
+
+## 👤 4️⃣ Özgür Ulusoy
+
+**1) Veritabanı Tasarımı ve Veri Modeli Oluşturma 🗄️**
+
+MySQL veritabanı için 12 tablo tasarlanmıştır: `kullanicilar`, `ciftlikler`, `tarlalar`, `urunler`, `sensorler`, `sensor_verileri`, `sulama_komutlari`, `gubreleme_komutlari`, `ilaclama_komutlari`, `alarmlar`, `sensor_esikler`, `yedekleme_log`. Tablolar 3NF normalizasyon prensiplerine uygun olarak oluşturulmuş, `FOREIGN KEY` ilişkileri ve bileşik indeksler tanımlanmıştır. Şifreler SHA2 ile hash'lenerek güvenli biçimde saklanmaktadır.
+
+---
+
+**2) Kullanıcı Arayüzü (UI) Geliştirmesi: Profil Sayfası 💻**
+
+Hafta 3 tasarımına uygun olarak profil sayfası HTML/CSS/JS ile geliştirilmiştir. Kullanıcı bilgilerini görüntüleme, düzenleme ve kaydetme işlevleri tamamlanmıştır. Form doğrulama, şifre değiştirme ve toast bildirimi özellikleri eklenmiştir. API endpoint'leri (`GET /api/profile`, `PUT /api/profile`) entegrasyona hazır hale getirilmiştir.
