@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATYS — Yönetici Dashboard</title>
+    <meta name="description" content="Akıllı Tarım Yönetim Sistemi - Yönetici Kontrol Paneli">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+            <h1 class="logo-text">ATYS Panel</h1>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active"><a href="index.html" class="nav-link"><i class="fas fa-th-large"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="tarlalar.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Tarlalar</a></li>
+            <li class="nav-item"><a href="alarm.html" class="nav-link"><i class="fas fa-bell"></i> Alarmlar <span class="badge-count">3</span></a></li>
+            <li class="nav-item"><a href="raporlar.html" class="nav-link"><i class="fas fa-chart-bar"></i> Raporlar</a></li>
+            <li class="nav-item"><a href="kullanicilar.html" class="nav-link"><i class="fas fa-users"></i> Kullanıcılar</a></li>
+            <li class="nav-item"><a href="profil.html" class="nav-link"><i class="fas fa-cog"></i> Ayarlar</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <img src="https://api.dicebear.com/7.x/initials/svg?seed=AY&backgroundColor=10B981" alt="avatar">
+            <div class="sidebar-footer-info">
+                <div class="name">Dr. Ayşe Yılmaz</div>
+                <div class="role">Ziraat Mühendisi</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <header class="top-header">
+            <h2 class="page-title">Dashboard</h2>
+            <div class="header-actions">
+                <div class="header-search"><i class="fas fa-search"></i><input type="text" placeholder="Tarla, sensör ara..."></div>
+                <button class="icon-btn" title="Bildirimler"><i class="fas fa-bell"></i><span class="dot"></span></button>
+                <button class="icon-btn" onclick="toggleTheme()" title="Tema Değiştir"><i class="fas fa-moon"></i></button>
+                <img src="https://api.dicebear.com/7.x/initials/svg?seed=AY&backgroundColor=10B981" alt="avatar" class="header-avatar">
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- KPI Cards -->
+            <div class="kpi-grid fade-in">
+                <div class="kpi-card">
+                    <div class="kpi-icon green"><i class="fas fa-tractor"></i></div>
+                    <div class="kpi-info">
+                        <h4>Aktif Tarlalar</h4>
+                        <div class="value">12</div>
+                        <div class="change"><i class="fas fa-arrow-up"></i> +2 bu ay</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon blue"><i class="fas fa-microchip"></i></div>
+                    <div class="kpi-info">
+                        <h4>Toplam Sensör</h4>
+                        <div class="value">48</div>
+                        <div class="change"><i class="fas fa-arrow-up"></i> %98 çevrimiçi</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon yellow"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="kpi-info">
+                        <h4>Aktif Alarmlar</h4>
+                        <div class="value">3</div>
+                        <div class="change down"><i class="fas fa-arrow-up"></i> +1 yeni</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon green"><i class="fas fa-heartbeat"></i></div>
+                    <div class="kpi-info">
+                        <h4>Sistem Sağlığı</h4>
+                        <div class="value">%96</div>
+                        <div class="change"><i class="fas fa-check-circle"></i> İyi durumda</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid-2 fade-in">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-tint" style="color:var(--info);margin-right:8px"></i>Nem & Sıcaklık Trendi</h3>
+                        <select class="form-control" style="width:auto;padding:6px 12px;font-size:0.8rem">
+                            <option>Son 7 Gün</option><option>Son 30 Gün</option><option>Son 90 Gün</option>
+                        </select>
+                    </div>
+                    <div class="chart-container"><canvas id="trendChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-flask" style="color:var(--warning);margin-right:8px"></i>NPK Değerleri Ortalaması</h3>
+                        <select class="form-control" style="width:auto;padding:6px 12px;font-size:0.8rem">
+                            <option>Tarla #1</option><option>Tarla #2</option><option>Tüm Tarlalar</option>
+                        </select>
+                    </div>
+                    <div class="chart-container"><canvas id="npkChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Alarms & Active Irrigation -->
+            <div class="grid-2 fade-in">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bell" style="color:var(--error);margin-right:8px"></i>Son Alarmlar</h3>
+                        <a href="alarm.html" class="btn btn-sm btn-outline">Tümünü Gör</a>
+                    </div>
+                    <div class="alarm-item">
+                        <div class="alarm-dot critical"></div>
+                        <div class="alarm-content">
+                            <h4>Nem Kritik Seviyede — Tarla #3</h4>
+                            <p>Toprak nemi %18'e düştü. Otomatik sulama tetiklendi.</p>
+                        </div>
+                        <div class="alarm-time">5 dk önce</div>
+                    </div>
+                    <div class="alarm-item">
+                        <div class="alarm-dot warning"></div>
+                        <div class="alarm-content">
+                            <h4>NPK Sensör Uyarısı — Tarla #1</h4>
+                            <p>Azot seviyesi eşik değerin altına düştü.</p>
+                        </div>
+                        <div class="alarm-time">23 dk önce</div>
+                    </div>
+                    <div class="alarm-item">
+                        <div class="alarm-dot info"></div>
+                        <div class="alarm-content">
+                            <h4>Gübre Tavsiyesi Oluşturuldu</h4>
+                            <p>Tarla #2 için YZ modeli yeni reçete önerdi.</p>
+                        </div>
+                        <div class="alarm-time">1 saat önce</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-water" style="color:var(--info);margin-right:8px"></i>Sulama Durumu</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>Tarla</th><th>Durum</th><th>Nem</th><th>Son Sulama</th></tr></thead>
+                        <tbody>
+                            <tr><td>Tarla #1 — Buğday</td><td><span class="status active">Aktif</span></td><td>%55</td><td>Bugün 08:30</td></tr>
+                            <tr><td>Tarla #2 — Mısır</td><td><span class="status info">Beklemede</span></td><td>%42</td><td>Dün 16:00</td></tr>
+                            <tr><td>Tarla #3 — Domates</td><td><span class="status danger">Sulama Gerekli</span></td><td>%18</td><td>2 gün önce</td></tr>
+                            <tr><td>Tarla #4 — Pamuk</td><td><span class="status active">Aktif</span></td><td>%61</td><td>Bugün 10:15</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// Theme toggle
+function toggleTheme() {
+    const html = document.documentElement;
+    html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? '' : 'dark');
+}
+
+// Trend Chart
+const trendCtx = document.getElementById('trendChart').getContext('2d');
+new Chart(trendCtx, {
+    type: 'line',
+    data: {
+        labels: ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'],
+        datasets: [
+            { label: 'Nem (%)', data: [55,52,48,42,38,44,55], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.4 },
+            { label: 'Sıcaklık (°C)', data: [22,24,26,28,27,25,23], borderColor: '#EF4444', backgroundColor: 'rgba(239,68,68,0.05)', fill: true, tension: 0.4 }
+        ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: false } } }
+});
+
+// NPK Chart
+const npkCtx = document.getElementById('npkChart').getContext('2d');
+new Chart(npkCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Azot (N)','Fosfor (P)','Potasyum (K)','pH'],
+        datasets: [
+            { label: 'Mevcut', data: [45,32,58,6.8], backgroundColor: ['#10B981','#3B82F6','#F59E0B','#8B5CF6'], borderRadius: 8 },
+            { label: 'Optimal', data: [60,40,65,7.0], backgroundColor: ['rgba(16,185,129,0.2)','rgba(59,130,246,0.2)','rgba(245,158,11,0.2)','rgba(139,92,246,0.2)'], borderRadius: 8 }
+        ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+</body>
+</html>
