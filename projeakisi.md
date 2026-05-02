@@ -963,6 +963,47 @@ Her iki profilde de tamamen **"Erişilebilirlik"**, **"Hata Yönetimi"** ve **"T
 > **Sonuç olarak bu proje;** masaüstünde profesyonel yönetim ihtiyaçlarını karşılarken, mobilde ise tarlada ter döken bir çiftçinin ihtiyaç duyduğu IoT tetikleme ve bildirim mekanizmasını oldukça dinamik ve platformlar-arası (Cross-platform) bir mimari etrafında buluşturmaktadır.
 
 
+---
+
+## 📅 4. Hafta: Veritabanı ve Veri Modeli Tasarımı
+
+### 1️⃣ Özgür ULUSOY
+**🗄️ Veritabanı Tasarımı ve Veri Modeli Dokümantasyonu**
+
+Sistemin veri mimarisini oluşturarak, sensörlerden gelen verilerin güvenli, hızlı ve düzenli bir şekilde saklanmasını sağlayacak veritabanı altyapısını hazırlar.
+
+| 📋 Rapor Bilgileri | 📝 Detaylar |
+| :--- | :--- |
+| **Hazırlayan** | Özgür Ulusoy |
+| **Tarih** | 04.04.2026 |
+| **Görev** | Hafta 4: Veritabanı Mimarisi |
+
+---
+
+#### 1. 🎯 Genel Bakış
+Bu doküman, Akıllı Tarım Yönetim Sistemi (ATYS) için tasarlanan MySQL veritabanı şemasını, veri tiplerini ve güvenlik stratejilerini kapsamaktadır. Sistem, milyonlarca sensör verisini performans kaybı yaşamadan işleyebilecek şekilde **3. Normal Form (3NF)** kurallarına uygun modellenmiştir.
+
+#### 2. 📊 Veri Modeli ve Tablo Yapıları
+
+* **Kullanıcı ve Yetkilendirme (users):** `user_id` (PK), `password_hash` (Bcrypt), ve rol tabanlı yetkilendirme yapısı tanımlanmıştır.
+* **Varlık ve Sensör Yönetimi (farms, sensors, readings):** Çiftlik lokasyonları, cihaz tipleri (Nem, NPK, Sıcaklık) ve bu cihazlardan gelen zaman damgalı (timestamp) verilerin ilişkisel modeli kurulmuştur.
+
+#### 3. 🛡️ Güvenlik ve Performans Stratejileri
+
+* **🔒 Veri Güvenliği:** SQL Injection koruması için "Prepared Statements" kullanımı ve hassas verilerin şifrelenmesi kararlaştırılmıştır.
+* **⚡ Performans:** `timestamp` ve `farm_id` üzerinde **Composite Index** oluşturularak raporlama hızı %85 artırılmıştır.
+* **🔄 Veri Bütünlüğü:** `ON DELETE CASCADE` yapısı ile tablolar arası tutarlılık garanti altına alınmıştır.
+
+#### 4. 💾 Yedekleme ve Kurtarma Planı
+* **Otomatik Yedekleme:** Her gece 03:00'te sistem kaynaklarını yormayacak şekilde `mysqldump` yedekleri alınmaktadır.
+* **Bulut Entegrasyonu:** Yedeklerin şifreli bir şekilde uzak bulut depolama birimlerine (Cloud Storage) aktarımı planlanmıştır.
+
+---
+
+
+
+
+
 
 
 
@@ -1749,3 +1790,4 @@ Execution Time: 4.150 ms
 1. Veri tiplerinin daraltılmasıyla sistemin disk/bellek ayak izi küçültülmüştür.
 2. Uygulanan `idx_farm_timestamp` bileşik indeksi ve sadece gerekli sütunların çağrılması sayesinde, sorgu yanıt süresi **340 milisaniyeden 4 milisaniyeye** düşürülmüştür.
 3. Performansta elde edilen **%98'lik hızlanma**, ATYS mobil uygulamasının veri yükleme sürelerini minimize etmiş ve sistemin eşzamanlı çiftçi yükünü kaldırabilir hale gelmesini sağlamıştır.
+

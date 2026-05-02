@@ -592,6 +592,150 @@ input:checked + .slider:before {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── Toast Notifications (Hafta 4 Ekleme) ─── */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    animation: toastSlideIn 0.4s ease;
+    min-width: 300px;
+    max-width: 440px;
+    backdrop-filter: blur(8px);
+    font-family: 'Inter', sans-serif;
+}
+
+.toast.toast-success {
+    background-color: #D1FAE5;
+    color: #065F46;
+    border-left: 4px solid var(--success);
+}
+
+.toast.toast-error {
+    background-color: #FEE2E2;
+    color: #991B1B;
+    border-left: 4px solid var(--error);
+}
+
+.toast-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.toast-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 0.9rem;
+    padding: 4px;
+    transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+.toast.removing {
+    animation: toastSlideOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastSlideOut {
+    to { opacity: 0; transform: translateX(60px); }
+}
+
+[data-theme="dark"] .toast.toast-success {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #6EE7B7;
+}
+
+[data-theme="dark"] .toast.toast-error {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #FCA5A5;
+}
+
+/* ─── Cancel Button (Hafta 4 Ekleme) ─── */
+.btn-cancel {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #FEE2E2;
+    color: var(--error);
+    border-color: var(--error);
+}
+
+[data-theme="dark"] .btn-cancel:hover {
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+/* ─── Form Validation States (Hafta 4 Ekleme) ─── */
+.form-control.input-error {
+    border-color: var(--error) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+.form-control.input-success {
+    border-color: var(--success) !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+}
+
+.form-control.editing-active {
+    background-color: #fff;
+    border-color: var(--primary);
+    animation: pulseHighlight 0.6s ease;
+}
+
+[data-theme="dark"] .form-control.editing-active {
+    background-color: #0F172A;
+}
+
+@keyframes pulseHighlight {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* ─── Hint Text (Hafta 4 Ekleme) ─── */
+.hint-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    display: block;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .settings-grid {
@@ -604,5 +748,14 @@ input:checked + .slider:before {
     
     .sidebar {
         display: none; /* In a real app, add a hamburger menu */
+    }
+
+    .toast-container {
+        right: 10px;
+        left: 10px;
+    }
+
+    .toast {
+        min-width: auto;
     }
 }
