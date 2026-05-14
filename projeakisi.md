@@ -1791,3 +1791,49 @@ Execution Time: 4.150 ms
 2. Uygulanan `idx_farm_timestamp` bileşik indeksi ve sadece gerekli sütunların çağrılması sayesinde, sorgu yanıt süresi **340 milisaniyeden 4 milisaniyeye** düşürülmüştür.
 3. Performansta elde edilen **%98'lik hızlanma**, ATYS mobil uygulamasının veri yükleme sürelerini minimize etmiş ve sistemin eşzamanlı çiftçi yükünü kaldırabilir hale gelmesini sağlamıştır.
 
+
+
+# 🚀 5. Hafta Görevleri ve Detaylar
+
+## 👤 1️⃣ Arda Yeşil
+**1) Proje Arşivleme ve Kaynak Kod Yönetimi 📁**  
+Proje dosyalarını ve kaynak kodlarını uygun şekilde arşivle ve yönet.  
+
+**2) Ölçeklenebilirlik Testleri ve İyileştirmeler ⚙️**  
+Uygulamanın ölçeklenebilirlik testlerini yap ve gerekli iyileştirmeleri uygula.  
+
+---
+
+## 👤 2️⃣ Nazlı Karaağaç
+**1) Final Sunum Hazırlığı ve Prova 🎤**  
+Projenin final sunumunu hazırla ve sunum provası yaparak eksiklikleri gider.  
+
+**2) Hata İzleme ve Loglama Sistemlerinin Kurulumu 🛠️**  
+Hata izleme ve loglama sistemlerini kurarak uygulamanın hatalarını daha kolay tespit etmeyi sağla.  
+
+---
+
+## 👤 3️⃣ Birgül Göktürk
+**1) Kullanıcı Geri Bildirimlerinin Değerlendirilmesi ve Entegrasyonu 💬**  
+Kullanıcı geri bildirimlerini değerlendir ve projenin son haline entegre et.  
+
+**2) API Entegrasyonları ve Güvenlik Kontrolleri 🔐**  
+Gerekli API entegrasyonlarını tamamla ve güvenlik açıklarını kapatmak için kontroller yap.  
+
+---
+
+## 👤 4️⃣ Özgür Ulusoy
+**1) Son Hata Ayıklama ve Optimizasyon Çalışmaları 🧩**  
+Projedeki son hataları ayıkla ve genel optimizasyon çalışmalarını tamamla.  
+
+**2) Kullanıcı Arayüzü Geliştirmeleri ve Erişilebilirlik İyileştirmeleri 💻**  
+Kullanıcı arayüzünde gerekli geliştirmeleri yap ve erişilebilirlik standartlarına uygun hale getir.  
+
+---
+
+## 👤 5️⃣ Miraç Özcan Ağcabay
+**1) Proje Final Dokümantasyonu ve Raporlama 📄**  
+Projenin final dokümantasyonunu tamamla ve kapsamlı bir rapor hazırlayarak sunuma hazır hale getir.  
+
+**2) Veritabanı Optimizasyonu ve Performans Testleri ⚡**  
+Veritabanı sorgularını optimize et ve performans testleri yaparak sistemin kararlılığını artır.  
