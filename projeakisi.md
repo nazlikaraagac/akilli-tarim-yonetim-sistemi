@@ -1834,6 +1834,9 @@ Kullanıcı arayüzünde gerekli geliştirmeleri yap ve erişilebilirlik standar
 ## 👤 5️⃣ Miraç Özcan Ağcabay
 **1) Proje Final Dokümantasyonu ve Raporlama 📄**  
 Projenin final dokümantasyonunu tamamla ve kapsamlı bir rapor hazırlayarak sunuma hazır hale getir.  
+Projenin tüm geliştirme süreçleri, teknik kararlar, gereksinim analizleri, mimari tasarım ve test sonuçları derlenerek kapsamlı bir Final Dokümantasyon Raporu oluşturulmuştur. 
+Hazırlanan rapor, grup yönetici ve üyelerle paylaşılmıştır
 
 **2) Veritabanı Optimizasyonu ve Performans Testleri ⚡**  
-Veritabanı sorgularını optimize et ve performans testleri yaparak sistemin kararlılığını artır.  
+Veritabanı sorgularını optimize et ve performans testleri yaparak sistemin kararlılığını artır. 
+tarim_iot veritabanı üzerinde gerçekleştirilen optimizasyon çalışmaları kapsamlı bir rapor olarak belgelenmiş ve proje yöneticisi Nazlı Karaağaç ile paylaşılmıştır. Raporda; 6 yeni bileşik indeks eklenmesi, sensor_verileri tablosuna aylık RANGE bölümleme uygulanması, 4 VIEW ve 5 stored procedure tanımlanması ile 3 trigger ile veri bütünlüğünün veritabanı düzeyinde güvence altına alınması ele alınmıştır. Yapılan iyileştirmeler mevcut uygulama kodunda herhangi bir değişiklik gerektirmeden sisteme entegre edilmiştir.
