@@ -402,3 +402,69 @@ export default function App() {
     </SafeAreaView>
   );
 }
+
+/* ─── ÖNERİLEN REACT NATIVE OPTİMİZASYONLARI ─────────────────────────────────
+ *
+ * 1. BÜYÜK LISTE OPTİMİZASYONU (FlatList):
+ *    ScrollView yerine FlatList kullan — yüzlerce tarla kartı varsa
+ *    ScrollView hepsini aynı anda render eder; FlatList sadece görünürde olanları.
+ *
+ *    // ÖNCE (kötü ölçeklenir):
+ *    <ScrollView>
+ *      {FARMS_DATA.map(farm => <FarmCard key={farm.id} {...farm} />)}
+ *    </ScrollView>
+ *
+ *    // SONRA (binlerce satır bile sorunsuz):
+ *    <FlatList
+ *      data={farms}
+ *      keyExtractor={item => item.id}
+ *      renderItem={({ item }) => <FarmCard {...item} />}
+ *      initialNumToRender={10}
+ *      maxToRenderPerBatch={20}
+ *      windowSize={5}
+ *      getItemLayout={(_, index) => ({ length: 120, offset: 120 * index, index })}
+ *    />
+ *
+ * 2. GEREKSIZ RE-RENDER ÖNLENMESİ (useMemo / useCallback / React.memo):
+ *
+ *    // Tarla kartlarını memoize et — farms listesi değişmeden yeniden render etme
+ *    const FarmCard = React.memo(({ name, temp, humidity, status, isWarning }) => {
+ *      // ...kart içeriği
+ *    });
+ *
+ *    // handleInputChange her render'da yeni fonksiyon oluşturmasın
+ *    const handleInputChange = useCallback((field, value) => {
+ *      setFormData(prev => ({ ...prev, [field]: value }));
+ *    }, []);
+ *
+ *    // Tema renkleri isDark değişince yeniden hesaplansın
+ *    const c = useMemo(() => isDark ? themeColors.dark : themeColors.light, [isDark]);
+ *
+ * 3. GERÇEK API HOOK'U:
+ *
+ *    function useFetch(url, token) {
+ *      const [data, setData] = useState(null);
+ *      const [loading, setLoading] = useState(true);
+ *      const [error, setError] = useState(null);
+ *
+ *      useEffect(() => {
+ *        let cancelled = false;
+ *        fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+ *          .then(r => r.json())
+ *          .then(d => { if (!cancelled) setData(d.data); })
+ *          .catch(e => { if (!cancelled) setError(e); })
+ *          .finally(() => { if (!cancelled) setLoading(false); });
+ *        return () => { cancelled = true; };  // Memory leak önleme
+ *      }, [url, token]);
+ *
+ *      return { data, loading, error };
+ *    }
+ *
+ * 4. GÖRÜNTÜ BOYUTU KONTROLÜ:
+ *    launchImageLibraryAsync çağrısında quality: 0.5 ve maxWidth: 800 ekle.
+ *    Büyük fotoğraflar base64'e çevrilince 5MB+ olabilir.
+ *
+ * 5. MOCK VERİLERİ ÇIKAR:
+ *    FARMS_DATA ve MOCK_NOTIFS sabitleri → API çağrısıyla değiştir.
+ *    useEffect içinde GET /api/farms ve GET /api/notifications çek.
+ */
