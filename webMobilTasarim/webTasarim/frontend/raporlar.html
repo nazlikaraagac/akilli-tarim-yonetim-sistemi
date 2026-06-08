@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <script>
+        if(!localStorage.getItem('atys_user')) {
+            window.location.replace('login');
+        }
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Tarım Yönetim Sistemi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+        if(localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+    <script src="lang.js"></script>
+</head>
+<body>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-leaf"></i></div><h1 class="logo-text">ATYS Panel</h1></div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index" class="nav-link"><i class="fas fa-th-large"></i> <span data-i18n="nav_home">Ana Sayfa</span></a></li>
+            <li class="nav-item"><a href="tarlalar" class="nav-link"><i class="fas fa-map-marked-alt"></i> <span data-i18n="nav_farms">Tarlalar</span></a></li>
+            <li class="nav-item"><a href="iot" class="nav-link"><i class="fas fa-wifi"></i> <span data-i18n="nav_iot">IoT Kontrol</span></a></li>
+            <li class="nav-item"><a href="takvim" class="nav-link"><i class="fas fa-calendar-alt"></i> <span data-i18n="nav_calendar">Takvim</span></a></li>
+            
+            <li class="nav-item"><a href="alarm" class="nav-link"><i class="fas fa-bell"></i> <span data-i18n="nav_alarms">Alarmlar</span></a></li>
+            <li class="nav-item active"><a href="raporlar" class="nav-link"><i class="fas fa-chart-bar"></i> <span data-i18n="nav_reports">Raporlar</span></a></li>
+            <li class="nav-item"><a href="kullanicilar" class="nav-link"><i class="fas fa-users"></i> <span data-i18n="nav_users">Kullanıcılar</span></a></li>
+            <li class="nav-item"><a href="ayarlar" class="nav-link"><i class="fas fa-cog"></i> <span data-i18n="nav_settings">Ayarlar</span></a></li>
+            <li class="nav-item" style="margin-top:auto"><a href="javascript:void(0)" onclick="logoutUser();return false;" class="nav-link" style="color:var(--error)"><i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Çıkış Yap</span></a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <img src="https://api.dicebear.com/7.x/initials/svg?seed=AY&backgroundColor=10B981" alt="avatar">
+            <div class="sidebar-footer-info"><div class="name">Dr. Ayşe Yılmaz</div><div class="role">Ziraat Mühendisi</div></div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <h2 class="page-title">Raporlar & Grafikler</h2>
+            <div class="header-actions">
+                <button class="btn btn-outline btn-sm" onclick="downloadMock('PDF')"><i class="fas fa-file-pdf"></i> PDF <span data-i18n="download">İndir</span></button>
+                <button class="btn btn-outline btn-sm" onclick="downloadMock('Excel')"><i class="fas fa-file-excel"></i> Excel <span data-i18n="download">İndir</span></button>
+                <button class="icon-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Filters -->
+            <div class="card fade-in" style="margin-bottom:24px">
+                <div class="filter-bar">
+                    <select class="form-control" onchange="filterReports()"><option>Tarla #1 — Buğday</option><option>Tarla #2 — Mısır</option><option>Tüm Tarlalar</option></select>
+                    <select class="form-control"><option>Son 30 Gün</option><option>Son 7 Gün</option><option>Son 90 Gün</option><option>Bu Yıl</option></select>
+                    <button class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i> Rapor Oluştur</button>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid-2 fade-in">
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-water" style="color:var(--info);margin-right:8px"></i>Aylık Sulama Kullanımı</h3></div>
+                    <div class="chart-container"><canvas id="irrigationChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-flask" style="color:var(--warning);margin-right:8px"></i>Aylık Gübre Kullanımı</h3></div>
+                    <div class="chart-container"><canvas id="fertilizerChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="grid-2 fade-in">
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-chart-area" style="color:var(--primary);margin-right:8px"></i>Verim Tahmini (YZ)</h3></div>
+                    <div class="chart-container"><canvas id="yieldChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-thermometer-half" style="color:var(--error);margin-right:8px"></i><span data-i18n="temperature">Sıcaklık</span> & Nem Korelasyonu</h3></div>
+                    <div class="chart-container"><canvas id="correlationChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- MySQL Summary Table -->
+            <div class="card fade-in" style="margin-top:24px">
+                <div class="card-header"><h3><i class="fas fa-database" style="color:var(--primary);margin-right:8px"></i>Veritabanı Özeti (MySQL — sensor_readings)</h3></div>
+                <table class="data-table">
+                    <thead><tr><th>Tarla</th><th>Kayıt Sayısı</th><th>İlk Veri</th><th>Son Veri</th><th>Ort. <span data-i18n="humidity">Nem</span></th><th>Ort. <span data-i18n="temperature">Sıcaklık</span></th><th>DB Boyutu</th></tr></thead>
+                    <tbody>
+                        <tr><td>Tarla #1</td><td>14,230</td><td>01.01.2026</td><td>01.05.2026</td><td>%52.3</td><td>22.1°C</td><td>2.4 MB</td></tr>
+                        <tr><td>Tarla #2</td><td>12,580</td><td>15.01.2026</td><td>01.05.2026</td><td>%45.8</td><td>25.7°C</td><td>2.1 MB</td></tr>
+                        <tr><td>Tarla #3</td><td>8,910</td><td>01.02.2026</td><td>01.05.2026</td><td>%38.2</td><td>27.3°C</td><td>1.5 MB</td></tr>
+                        <tr><td>Tarla #4</td><td>11,340</td><td>10.01.2026</td><td>01.05.2026</td><td>%58.1</td><td>23.4°C</td><td>1.9 MB</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+function toggleTheme() { 
+    const h = document.documentElement; 
+    const isDark = h.getAttribute('data-theme') === 'dark';
+    h.setAttribute('data-theme', isDark ? '' : 'dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+}
+const months = ['Oca','Şub','Mar','Nis','May'];
+
+new Chart(document.getElementById('irrigationChart'), {
+    type: 'bar',
+    data: { labels: months, datasets: [{ label: 'Su (m³)', data: [120,95,140,180,155], backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('fertilizerChart'), {
+    type: 'bar',
+    data: { labels: months, datasets: [
+        { label: 'Üre (kg)', data: [45,38,52,60,48], backgroundColor: 'rgba(16,185,129,0.7)', borderRadius: 8 },
+        { label: 'DAP (kg)', data: [20,15,25,30,22], backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 8 }
+    ] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+});
+
+new Chart(document.getElementById('yieldChart'), {
+    type: 'line',
+    data: { labels: months, datasets: [
+        { label: 'Tahmin (ton/ha)', data: [3.2,3.5,3.8,4.1,4.3], borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4 },
+        { label: 'Geçen Yıl', data: [3.0,3.1,3.3,3.5,3.6], borderColor: '#94A3B8', borderDash: [5,5], tension: 0.4 }
+    ] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+});
+
+new Chart(document.getElementById('correlationChart'), {
+    type: 'scatter',
+    data: { datasets: [{
+        label: 'Sıcaklık vs Nem', data: [
+            {x:18,y:65},{x:20,y:60},{x:22,y:55},{x:24,y:52},{x:26,y:48},{x:28,y:42},{x:30,y:38},{x:32,y:35},{x:34,y:30},{x:36,y:25}
+        ], backgroundColor: 'rgba(239,68,68,0.6)', pointRadius: 6
+    }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { title: { display: true, text: 'Sıcaklık (°C)' } }, y: { title: { display: true, text: 'Nem (%)' } } } }
+});
+
+function downloadMock(type) {
+    const text = "Örnek " + type + " Raporu İçeriği\nOluşturulma Tarihi: " + new Date().toLocaleString();
+    const blob = new Blob([text], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "Rapor." + (type === 'Excel' ? 'xlsx' : 'pdf');
+    a.click();
+    URL.revokeObjectURL(url);
+    alert(type + " dosyası başarıyla indirildi.");
+}
+
+function filterReports() {
+    alert("Raporlar seçilen kritere göre filtrelendi.");
+}
+
+</script>
+</body>
+</html>
