@@ -1,6 +1,6 @@
 # Akıllı Tarım Yönetim Sistemi - Mobil Çiftçi Profili
 
-Bu doküman, projede React Native kullanılarak geliştirilen "Çiftçi Profil Sayfası" modülünün yeteneklerini, içerdiği özellikleri ve kullanılan teknolojileri proje hocalarınıza/jüriye sunabileceğiniz bir formatta özetlemektedir.
+
 
 ## 🛠 Kullanılan Teknolojiler
 Mobil uygulama, modern komponent tabanlı bir mimariyle geliştirilmiş olup, akıcı bir kullanıcı deneyimi hedeflenmiştir:
