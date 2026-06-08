@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Akıllı Tarım",
+    "slug": "mobil-ciftci",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
+    "splash": {
+      "backgroundColor": "#064e3b",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sifirhata.akilliTarim"
+    },
+    "android": {
+      "package": "com.sifirhata.akilliTarim",
+      "adaptiveIcon": {
+        "backgroundColor": "#064e3b"
+      }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        { "photosPermission": "Profil fotoğrafınızı güncellemek için galeri erişimi gereklidir." }
+      ]
+    ]
+  }
+}
