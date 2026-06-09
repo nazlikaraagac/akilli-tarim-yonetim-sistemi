@@ -350,6 +350,159 @@
             .after-footer { flex-direction: column; }
             .footer-right { text-align: left; }
         }
+
+        /* ── LOGIN MODAL ── */
+        #loginModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+        }
+        #loginModal.open { display: flex; }
+
+        .modal-card {
+            background: #0d1f14;
+            border: 1px solid rgba(52,211,153,0.2);
+            border-radius: 20px;
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 20px;
+            background: none;
+            border: none;
+            color: rgba(167,243,208,0.5);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: #a7f3d0; }
+
+        .modal-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .modal-logo i { color: #34d399; font-size: 1.3rem; }
+        .modal-logo span {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #a7f3d0;
+            letter-spacing: 1px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        .modal-sub {
+            font-size: 0.83rem;
+            color: #6ee7b7;
+            opacity: 0.6;
+            margin-bottom: 28px;
+        }
+
+        .modal-group { margin-bottom: 16px; }
+        .modal-group label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #6ee7b7;
+            margin-bottom: 7px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .modal-input-wrap { position: relative; }
+        .modal-input-wrap i {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: rgba(110,231,183,0.4);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            background: rgba(16,185,129,0.07);
+            border: 1px solid rgba(52,211,153,0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #f0fdf4;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .modal-input::placeholder { color: rgba(167,243,208,0.3); }
+        .modal-input:focus {
+            outline: none;
+            border-color: #34d399;
+            box-shadow: 0 0 0 3px rgba(52,211,153,0.12);
+            background: rgba(16,185,129,0.1);
+        }
+
+        .modal-error {
+            display: none;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+            color: #fca5a5;
+            font-size: 0.82rem;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .modal-error.show { display: block; }
+
+        .modal-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 22px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+        }
+        .modal-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+        }
+        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .modal-footer-link {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 0.8rem;
+            color: rgba(167,243,208,0.5);
+        }
+        .modal-footer-link a {
+            color: #34d399;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-footer-link a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -500,7 +653,7 @@
                 <span>Hesabınız yoksa kayıt ekranından oluşturabilirsiniz.</span>
             </div>
             <a href="login" class="btn-primary">
-                Giriş Yap &nbsp;<i class="fas fa-arrow-right"></i>
+                Panele Git &nbsp;<i class="fas fa-arrow-right"></i>
             </a>
         </div>
 
@@ -515,6 +668,49 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- ── LOGIN MODAL ──────────────────────────────────── -->
+<div id="loginModal">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+
+        <div class="modal-logo">
+            <i class="fas fa-seedling"></i>
+            <span>ATYS</span>
+        </div>
+
+        <div class="modal-title">Hoş geldiniz</div>
+        <div class="modal-sub">Hesabınıza giriş yapın.</div>
+
+        <div class="modal-error" id="modalError"></div>
+
+        <div class="modal-group">
+            <label>Kullanıcı Adı</label>
+            <div class="modal-input-wrap">
+                <i class="fas fa-user"></i>
+                <input id="modalUsername" type="text" class="modal-input" placeholder="Kullanıcı adınız" autocomplete="username">
+            </div>
+        </div>
+
+        <div class="modal-group">
+            <label>Şifre</label>
+            <div class="modal-input-wrap">
+                <i class="fas fa-lock"></i>
+                <input id="modalPassword" type="password" class="modal-input" placeholder="Şifreniz" autocomplete="current-password">
+            </div>
+        </div>
+
+        <button class="modal-btn" id="modalBtn" onclick="doModalLogin()">
+            <span id="modalBtnText">Giriş Yap</span>
+            <i class="fas fa-arrow-right" id="modalBtnIcon"></i>
+        </button>
+
+        <div class="modal-footer-link">
+            Hesabınız yok mu?
+            <a onclick="closeModal(); sessionStorage.setItem('openRegister','1'); window.location.href='login';">Ücretsiz kayıt olun</a>
+        </div>
     </div>
 </div>
 
@@ -683,6 +879,84 @@
     });
 
 }());
+
+// ── Modal ─────────────────────────────────────────────
+function openModal() {
+    document.getElementById('loginModal').classList.add('open');
+    setTimeout(function () { document.getElementById('modalUsername').focus(); }, 100);
+}
+
+function closeModal() {
+    document.getElementById('loginModal').classList.remove('open');
+    document.getElementById('modalError').classList.remove('show');
+    document.getElementById('modalUsername').value = '';
+    document.getElementById('modalPassword').value = '';
+    document.getElementById('modalBtnText').textContent = 'Giriş Yap';
+    document.getElementById('modalBtn').disabled = false;
+}
+
+async function doModalLogin() {
+    var username = document.getElementById('modalUsername').value.trim();
+    var password = document.getElementById('modalPassword').value;
+    var errorEl  = document.getElementById('modalError');
+    var btn      = document.getElementById('modalBtn');
+    var btnText  = document.getElementById('modalBtnText');
+    var btnIcon  = document.getElementById('modalBtnIcon');
+
+    if (!username || !password) {
+        errorEl.textContent = 'Lütfen tüm alanları doldurunuz.';
+        errorEl.classList.add('show');
+        return;
+    }
+
+    errorEl.classList.remove('show');
+    btn.disabled = true;
+    btnText.textContent = 'Giriş yapılıyor...';
+    btnIcon.style.display = 'none';
+
+    try {
+        var res  = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, password: password })
+        });
+        var data = await res.json();
+
+        if (res.ok && data.success) {
+            localStorage.setItem('atys_user', JSON.stringify({
+                username:   data.username,
+                role:       data.role,
+                avatar_url: data.avatar_url  || '',
+                first_name: data.first_name  || '',
+                last_name:  data.last_name   || ''
+            }));
+            btnText.textContent = 'Başarılı!';
+            btnIcon.className   = 'fas fa-check';
+            btnIcon.style.display = 'inline';
+            btn.style.background  = 'linear-gradient(135deg,#059669,#047857)';
+            setTimeout(function () { window.location.href = 'index'; }, 600);
+        } else {
+            throw new Error(data.message || 'Kullanıcı adı veya şifre hatalı.');
+        }
+    } catch (err) {
+        var msg = err.message === 'Failed to fetch'
+            ? 'Sunucuya bağlanılamadı.'
+            : err.message;
+        errorEl.textContent = msg;
+        errorEl.classList.add('show');
+        btn.disabled = false;
+        btnText.textContent = 'Giriş Yap';
+        btnIcon.style.display = 'inline';
+    }
+}
+
+// ESC ile kapat, overlay'e tıklayınca kapat
+document.getElementById('loginModal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+});
 </script>
 
 </body>
