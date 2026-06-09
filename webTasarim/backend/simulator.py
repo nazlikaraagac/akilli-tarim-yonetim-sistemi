@@ -28,16 +28,16 @@ def simulate_sensors():
                 
                 # Veritabanına kaydet
                 cursor.execute("""
-                    INSERT INTO sensor_readings 
+                    INSERT INTO sensor_readings
                     (sensor_id, temperature, humidity, soil_moisture, nitrogen, phosphorus, potassium)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, (sensor_id, temp, hum, soil_m, nitro, phos, potas))
-                
+
                 # Kritik durum kontrolü (Alarm tetikleme)
                 if soil_m < 25.0:
                     cursor.execute("""
                         INSERT INTO alarms (field_id, message, severity)
-                        VALUES (?, ?, ?)
+                        VALUES (%s, %s, %s)
                     """, (field_id, f"Kritik Toprak Nemi (%{soil_m}) - Sulama Gerekli!", "Kritik"))
                     print(f"⚠️ ALARM: Tarla {field_id} için toprak nemi çok düşük!")
             

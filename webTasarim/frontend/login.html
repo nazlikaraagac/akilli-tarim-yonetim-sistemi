@@ -6,9 +6,9 @@
     <title>Akıllı Tarım Yönetim Sistemi</title>
     <meta name="description" content="Akıllı Tarım Yönetim Sistemi - Giriş ve Kayıt">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
             display: flex;
@@ -16,36 +16,24 @@
             justify-content: center;
             min-height: 100vh;
             padding: 40px 20px;
-            background: linear-gradient(135deg, #064e3b 0%, #0c3823 50%, #052e16 100%);
             position: relative;
             overflow-x: hidden;
+            background: #020c06;
         }
 
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
-            animation: float 8s ease-in-out infinite;
-        }
+        /* Farm background image */
         body::before {
-            width: 500px; height: 500px;
-            background: #10b981;
-            top: -150px; left: -100px;
-        }
-        body::after {
-            width: 400px; height: 400px;
-            background: #059669;
-            bottom: -100px; right: -80px;
-            animation-delay: -4s;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.05); }
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1586771107445-d3ca888129ff?w=1920&q=80') center/cover no-repeat;
+            filter: brightness(0.28) saturate(0.7);
+            z-index: 0;
         }
 
         .auth-wrapper {
+            position: relative;
+            z-index: 1;
             width: 100%;
             max-width: 460px;
             z-index: 10;
@@ -90,41 +78,41 @@
         .brand p { color: #a7f3d0; font-size: 1rem; font-weight: 500; }
 
         .auth-card {
-            background: #fff;
+            background: rgba(10,40,20,0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             width: 100%;
-            border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.35);
             overflow: hidden;
         }
 
-        /* Form padding */
-        .auth-form { padding: 32px 30px; }
+        .auth-form { padding: 36px 32px; }
 
         .form-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: #111827;
+            color: #ffffff;
             margin-bottom: 4px;
+            letter-spacing: -0.2px;
         }
         .form-subtitle {
             font-size: 0.85rem;
-            color: #6b7280;
-            margin-bottom: 24px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 28px;
         }
 
-        /* Toggle link between login/register */
-        .mode-toggle {
-            display: none;
-        }
+        .mode-toggle { display: none; }
 
         .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block;
             font-size: 0.72rem;
-            font-weight: 700;
-            color: #6b7280;
+            font-weight: 600;
+            color: rgba(255,255,255,0.55);
             margin-bottom: 7px;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
         }
 
@@ -134,7 +122,7 @@
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
+            color: rgba(255,255,255,0.3);
             font-size: 0.9rem;
             pointer-events: none;
             transition: color 0.2s;
@@ -142,48 +130,45 @@
         .form-control {
             width: 100%;
             padding: 13px 16px 13px 40px;
-            background: #f9fafb;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
             font-size: 0.93rem;
-            color: #374151;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             transition: all 0.2s;
         }
-        .form-control::placeholder { color: #9ca3af; }
+        .form-control::placeholder { color: rgba(255,255,255,0.25); }
         .form-control:focus {
             outline: none;
-            border-color: #10b981;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+            border-color: rgba(52,211,153,0.6);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 3px rgba(52,211,153,0.1);
         }
-        .input-wrapper:focus-within > i.field-icon { color: #10b981; }
+        .input-wrapper:focus-within > i.field-icon { color: rgba(52,211,153,0.8); }
 
-        select.form-control { appearance: none; cursor: pointer; }
+        select.form-control {
+            appearance: none; cursor: pointer; color: #ffffff;
+        }
+        select.form-control option { background: #0d2010; color: #ffffff; }
 
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        /* Password strength */
         .strength-bar {
-            margin-top: 8px;
-            height: 4px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
+            margin-top: 8px; height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px; overflow: hidden;
         }
         .strength-fill {
-            height: 100%;
-            width: 0%;
+            height: 100%; width: 0%;
             border-radius: 4px;
             transition: width 0.3s, background 0.3s;
         }
         .strength-label {
-            font-size: 0.72rem;
-            margin-top: 4px;
-            font-weight: 600;
-            min-height: 16px;
+            font-size: 0.72rem; margin-top: 4px;
+            font-weight: 600; min-height: 16px;
         }
 
-        /* Password rules */
         .pw-rules {
             margin-top: 10px;
             display: grid;
@@ -192,47 +177,31 @@
         }
         .pw-rule {
             font-size: 0.76rem;
-            color: #9ca3af;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            color: rgba(255,255,255,0.3);
+            display: flex; align-items: center; gap: 5px;
             transition: color 0.2s;
         }
         .pw-rule i { font-size: 0.65rem; }
-        .pw-rule.ok { color: #10b981; }
+        .pw-rule.ok { color: #34d399; }
 
-        /* Alert boxes */
         .alert-box {
-            padding: 12px 14px;
-            border-radius: 10px;
-            font-size: 0.84rem;
-            font-weight: 500;
-            margin-bottom: 18px;
-            display: none;
-            align-items: center;
-            gap: 8px;
+            padding: 12px 14px; border-radius: 10px;
+            font-size: 0.84rem; font-weight: 500;
+            margin-bottom: 18px; display: none;
+            align-items: center; gap: 8px;
         }
-        .alert-error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-        .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .alert-error { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+        .alert-success { background: rgba(52,211,153,0.1); color: #a7f3d0; border: 1px solid rgba(52,211,153,0.2); }
 
-        /* Submit button */
         .btn-submit {
-            width: 100%;
-            padding: 14px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, #10b981, #059669);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
             margin-top: 22px;
             box-shadow: 0 8px 20px rgba(16,185,129,0.3);
-            transition: all 0.2s;
+            transition: all 0.2s; font-family: 'Inter', sans-serif;
         }
         .btn-submit:hover:not(:disabled) {
             background: linear-gradient(135deg, #059669, #047857);
@@ -243,46 +212,34 @@
         .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .loading-spinner {
-            display: none;
-            width: 18px; height: 18px;
+            display: none; width: 18px; height: 18px;
             border: 2px solid rgba(255,255,255,0.4);
-            border-radius: 50%;
-            border-top-color: #fff;
+            border-radius: 50%; border-top-color: #fff;
             animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Switch link */
         .switch-link {
-            font-size: 0.83rem;
-            color: #6b7280;
-            text-align: center;
-            margin-top: 18px;
+            font-size: 0.83rem; color: rgba(255,255,255,0.45);
+            text-align: center; margin-top: 18px;
         }
         .switch-link a {
-            color: #10b981;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
+            color: #34d399; font-weight: 700;
+            text-decoration: none; cursor: pointer;
         }
         .switch-link a:hover { text-decoration: underline; }
 
-        /* Divider between form sections */
         .section-divider {
             display: flex; align-items: center; gap: 12px; margin: 20px 0 16px;
         }
-        .section-divider hr { flex: 1; border: none; border-top: 1px solid #e5e7eb; }
-        .section-divider span { font-size: 0.72rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; }
+        .section-divider hr { flex: 1; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
+        .section-divider span { font-size: 0.72rem; color: rgba(255,255,255,0.3); font-weight: 600; text-transform: uppercase; }
 
-        /* Footer */
         .auth-footer {
-            text-align: center;
-            color: #6ee7b7;
-            font-size: 0.8rem;
+            text-align: center; color: rgba(255,255,255,0.35); font-size: 0.8rem;
         }
-        .auth-footer p { margin-bottom: 4px; opacity: 0.8; }
+        .auth-footer p { margin-bottom: 4px; }
 
-        /* Slide animations */
         @keyframes slideInRight {
             from { opacity: 0; transform: translateX(40px); }
             to   { opacity: 1; transform: translateX(0); }
@@ -294,15 +251,11 @@
         .slide-in-right { animation: slideInRight 0.35s ease forwards; }
         .slide-in-left  { animation: slideInLeft 0.35s ease forwards; }
 
-        /* Terms */
         .terms {
-            font-size: 0.78rem;
-            color: #9ca3af;
-            text-align: center;
-            margin-top: 14px;
-            line-height: 1.5;
+            font-size: 0.78rem; color: rgba(255,255,255,0.3);
+            text-align: center; margin-top: 14px; line-height: 1.5;
         }
-        .terms a { color: #10b981; text-decoration: none; font-weight: 600; }
+        .terms a { color: #34d399; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -320,7 +273,7 @@
 
         <!-- LOGIN FORM -->
         <div class="auth-form" id="loginSection">
-            <p class="form-title">Tekrar hoş geldiniz! 👋</p>
+            <p class="form-title">Tekrar hoş geldiniz.</p>
             <p class="form-subtitle">Devam etmek için hesabınıza giriş yapın.</p>
 
             <div class="alert-box alert-error" id="loginError">
@@ -692,6 +645,12 @@
         text.textContent = label;
         spinner.style.display = loading ? 'block' : 'none';
         icon.style.display   = loading ? 'none' : 'inline';
+    }
+
+    // Auto-open register if coming from landing page CTA
+    if (sessionStorage.getItem('openRegister') === '1') {
+        sessionStorage.removeItem('openRegister');
+        showSection('register');
     }
 
     // Enter key

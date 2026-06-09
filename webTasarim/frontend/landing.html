@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Tarım Yönetim Sistemi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100dvh;
+            background: #000;
+        }
+
+        /* ── HERO SECTION ─────────────────────────────── */
+        #hero {
+            position: relative;
+            width: 100vw;
+            height: 100dvh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Background image */
+        #bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        #bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: none;
+            object-position: center;
+            display: block;
+        }
+        #bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.12);
+        }
+
+        /* Expanding media card */
+        #media-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0,0,0,0.35);
+            will-change: width, height;
+        }
+        #media-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+        #media-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
+
+        /* Title words — positioned over media */
+        .hero-title {
+            position: relative;
+            z-index: 10;
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 900;
+            color: #a7f3d0;
+            text-align: center;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 30px rgba(0,0,0,0.4);
+            will-change: transform;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Inner flex wrapper to center titles + media */
+        #hero-inner {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Scroll hint — shown below media card */
+        #scroll-hint {
+            position: absolute;
+            z-index: 10;
+            text-align: center;
+            pointer-events: none;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        #date-text {
+            color: #a7f3d0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            will-change: transform;
+        }
+        #scroll-text {
+            color: #6ee7b7;
+            font-size: 0.8rem;
+            font-weight: 500;
+            will-change: transform;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #scroll-arrow {
+            animation: bounce 1.6s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+
+        /* ── AFTER-EXPAND CONTENT ─────────────────────── */
+        #after-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.7s ease;
+            background: #020c06;
+            min-height: 100vh;
+            padding: 0 0 100px;
+            position: relative;
+        }
+        #after-content.visible { opacity: 1; }
+
+        /* Farm background — same image as hero, heavily dimmed */
+        #after-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        #after-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 60%;
+            display: block;
+            filter: brightness(0.28) saturate(0.6);
+        }
+
+        /* content sits above bg */
+        .after-rule,
+        .after-inner { position: relative; z-index: 1; }
+
+        /* top divider — thin green line where hero ends */
+        .after-rule {
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(52,211,153,0.6), transparent);
+            margin: 0 auto 72px;
+        }
+
+        .after-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── Section header ── */
+        .section-eyebrow {
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color: #34d399;
+            margin-bottom: 18px;
+        }
+
+        .section-heading {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            margin-bottom: 24px;
+        }
+
+        .section-lead {
+            font-size: 1rem;
+            color: #a7f3d0;
+            line-height: 1.8;
+            max-width: 520px;
+            margin-bottom: 80px;
+        }
+
+        /* ── Feature rows ── */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 80px;
+        }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: 56px 1fr;
+            gap: 28px;
+            align-items: start;
+            padding: 36px 0;
+            border-top: 1px solid rgba(52,211,153,0.08);
+        }
+        .feature-row:last-child { border-bottom: 1px solid rgba(52,211,153,0.08); }
+
+        .feature-num {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #34d399;
+            letter-spacing: 0;
+            padding-top: 4px;
+        }
+
+        .feature-body {}
+
+        .feature-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: -0.2px;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #a7f3d0;
+            line-height: 1.75;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6ee7b7;
+            border: 1px solid rgba(110,231,183,0.3);
+            padding: 5px 14px;
+            border-radius: 20px;
+            letter-spacing: 0;
+        }
+
+        /* ── CTA ── */
+        .cta-block {
+            padding-top: 64px;
+            border-top: 1px solid rgba(52,211,153,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .cta-label {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+        .cta-label span {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: #86efac;
+            margin-top: 4px;
+            letter-spacing: 0;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #10b981;
+            color: #fff;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 0.2px;
+            transition: background 0.2s, transform 0.15s;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-primary:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        /* ── Footer ── */
+        .after-footer {
+            margin-top: 80px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(52,211,153,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-left {
+            font-size: 0.78rem;
+            color: rgba(167,243,208,0.55);
+            line-height: 1.6;
+        }
+
+        .footer-right {
+            font-size: 0.72rem;
+            color: rgba(167,243,208,0.45);
+            text-align: right;
+        }
+
+        @media (max-width: 640px) {
+            .cta-block { flex-direction: column; align-items: flex-start; }
+            .after-footer { flex-direction: column; }
+            .footer-right { text-align: left; }
+        }
+
+        /* ── LOGIN MODAL ── */
+        #loginModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+        }
+        #loginModal.open { display: flex; }
+
+        .modal-card {
+            background: #0d1f14;
+            border: 1px solid rgba(52,211,153,0.2);
+            border-radius: 20px;
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 20px;
+            background: none;
+            border: none;
+            color: rgba(167,243,208,0.5);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: #a7f3d0; }
+
+        .modal-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .modal-logo i { color: #34d399; font-size: 1.3rem; }
+        .modal-logo span {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #a7f3d0;
+            letter-spacing: 1px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        .modal-sub {
+            font-size: 0.83rem;
+            color: #6ee7b7;
+            opacity: 0.6;
+            margin-bottom: 28px;
+        }
+
+        .modal-group { margin-bottom: 16px; }
+        .modal-group label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #6ee7b7;
+            margin-bottom: 7px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .modal-input-wrap { position: relative; }
+        .modal-input-wrap i {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: rgba(110,231,183,0.4);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            background: rgba(16,185,129,0.07);
+            border: 1px solid rgba(52,211,153,0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #f0fdf4;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .modal-input::placeholder { color: rgba(167,243,208,0.3); }
+        .modal-input:focus {
+            outline: none;
+            border-color: #34d399;
+            box-shadow: 0 0 0 3px rgba(52,211,153,0.12);
+            background: rgba(16,185,129,0.1);
+        }
+
+        .modal-error {
+            display: none;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+            color: #fca5a5;
+            font-size: 0.82rem;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .modal-error.show { display: block; }
+
+        .modal-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 22px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+        }
+        .modal-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+        }
+        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .modal-footer-link {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 0.8rem;
+            color: rgba(167,243,208,0.5);
+        }
+        .modal-footer-link a {
+            color: #34d399;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-footer-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- ── HERO ──────────────────────────────────────────── -->
+<section id="hero">
+
+    <!-- Background -->
+    <div id="bg">
+        <img
+            src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?w=1920&q=80"
+            alt="Tarım alanı"
+        >
+    </div>
+
+    <!-- Inner layout: title top + media + title bottom -->
+    <div id="hero-inner">
+        <h1 class="hero-title" id="title-top">AKILLI</h1>
+
+        <!-- Expanding media card (absolute, centered by JS) -->
+        <div id="media-card">
+            <img
+                src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1280&q=80"
+                alt="Tarım sistemi"
+            >
+            <div id="media-overlay"></div>
+        </div>
+
+        <!-- Scroll hint below the card -->
+        <div id="scroll-hint">
+            <p id="date-text">Fırat Üniversitesi &middot; 2026</p>
+            <p id="scroll-text">
+                Keşfetmek için kaydırın
+                <i class="fas fa-chevron-down" id="scroll-arrow"></i>
+            </p>
+        </div>
+
+        <h1 class="hero-title" id="title-bottom">TARIM</h1>
+    </div>
+</section>
+
+<!-- ── AFTER-EXPAND CONTENT ──────────────────────────── -->
+<div id="after-content">
+
+    <!-- dark farm background -->
+    <div id="after-bg">
+        <img
+            src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?w=1920&q=80"
+            alt=""
+        >
+    </div>
+
+    <div class="after-rule"></div>
+
+    <div class="after-inner">
+
+        <p class="section-eyebrow">Sistem Mimarisi</p>
+        <h2 class="section-heading">Sahadan sunucuya,<br>kesintisiz veri akışı.</h2>
+        <p class="section-lead">
+            Dört katmanlı mimari: IoT donanımından Flask backend'e,
+            oradan web paneline ve mobil uygulamaya uzanan
+            tam entegre bir tarım yönetim altyapısı.
+        </p>
+
+        <div class="feature-list">
+
+            <div class="feature-row">
+                <div class="feature-num">01</div>
+                <div class="feature-body">
+                    <div class="feature-title">IoT Sensör Altyapısı</div>
+                    <div class="feature-desc">
+                        Tarla ortamına yerleştirilen DHT22, kapasitif toprak nemi ve NPK sensörleri,
+                        MQTT protokolü üzerinden gerçek zamanlı veri akışı sağlar.
+                        Bağlantı koptuğunda veriler cihaz üzerinde tamponlanır,
+                        bağlantı geri geldiğinde sırasıyla iletilir.
+                    </div>
+                    <div class="feature-tags">
+                        <span class="tag">MQTT / QoS-1</span>
+                        <span class="tag">ESP32</span>
+                        <span class="tag">DHT22 · NPK · Toprak Nemi</span>
+                        <span class="tag">Offline Buffer</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-num">02</div>
+                <div class="feature-body">
+                    <div class="feature-title">Yapay Zeka Karar Destek Modülü</div>
+                    <div class="feature-desc">
+                        Scikit-learn Decision Tree modeli, sıcaklık, nem ve NPK verilerini
+                        birleştirerek sulama ihtiyacını tahmin eder.
+                        Bitki büyüme evresine özgü eşik değerleriyle gübre tavsiyesi üretir.
+                        Anomali tespiti sayesinde arızalı sensör verisi modele ulaşmadan elenir.
+                    </div>
+                    <div class="feature-tags">
+                        <span class="tag">Scikit-learn</span>
+                        <span class="tag">Decision Tree</span>
+                        <span class="tag">NPK Analizi</span>
+                        <span class="tag">Anomali Tespiti</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-num">03</div>
+                <div class="feature-body">
+                    <div class="feature-title">Web Yönetici Paneli</div>
+                    <div class="feature-desc">
+                        Ziraat mühendisleri ve sistem yöneticileri için Flask REST API üzerine
+                        inşa edilmiş HTML/JS arayüzü. Anlık sensör grafikleri, alarm yönetimi,
+                        tarım takvimi ve kullanıcı işlemleri tek ekranda.
+                        Karanlık mod ve Türkçe/İngilizce dil desteği ile gelir.
+                    </div>
+                    <div class="feature-tags">
+                        <span class="tag">Flask · MySQL</span>
+                        <span class="tag">Chart.js</span>
+                        <span class="tag">REST API</span>
+                        <span class="tag">Docker</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-num">04</div>
+                <div class="feature-body">
+                    <div class="feature-title">Çiftçi Mobil Uygulaması</div>
+                    <div class="feature-desc">
+                        React Native (Expo) ile geliştirilen çiftçi uygulaması,
+                        sahada tarlalar arası anlık durum takibi, sulama motoru tetikleme
+                        ve gübre onayı gibi kritik aksiyonları tek dokunuşla sunar.
+                        Backend erişilemez olsa dahi demo verileriyle çalışmaya devam eder.
+                    </div>
+                    <div class="feature-tags">
+                        <span class="tag">React Native</span>
+                        <span class="tag">Expo</span>
+                        <span class="tag">iOS · Android</span>
+                        <span class="tag">Offline Fallback</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="cta-block">
+            <div class="cta-label">
+                Panele erişmek için giriş yapın.
+                <span>Hesabınız yoksa kayıt ekranından oluşturabilirsiniz.</span>
+            </div>
+            <a href="login" class="btn-primary">
+                Panele Git &nbsp;<i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="after-footer">
+            <div class="footer-left">
+                Sıfır Hata Timi &mdash; Fırat Üniversitesi Yazılım Mühendisliği<br>
+                Yazılım Geliştirme Laboratuvarı &middot; 2026
+            </div>
+            <div class="footer-right">
+                Nazlı Karaağaç &middot; Miraç Ağcabay<br>
+                Birgül Göktürk &middot; Arda Yeşil &middot; Özgür Ulusoy
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── LOGIN MODAL ──────────────────────────────────── -->
+<div id="loginModal">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+
+        <div class="modal-logo">
+            <i class="fas fa-seedling"></i>
+            <span>ATYS</span>
+        </div>
+
+        <div class="modal-title">Hoş geldiniz</div>
+        <div class="modal-sub">Hesabınıza giriş yapın.</div>
+
+        <div class="modal-error" id="modalError"></div>
+
+        <div class="modal-group">
+            <label>Kullanıcı Adı</label>
+            <div class="modal-input-wrap">
+                <i class="fas fa-user"></i>
+                <input id="modalUsername" type="text" class="modal-input" placeholder="Kullanıcı adınız" autocomplete="username">
+            </div>
+        </div>
+
+        <div class="modal-group">
+            <label>Şifre</label>
+            <div class="modal-input-wrap">
+                <i class="fas fa-lock"></i>
+                <input id="modalPassword" type="password" class="modal-input" placeholder="Şifreniz" autocomplete="current-password">
+            </div>
+        </div>
+
+        <button class="modal-btn" id="modalBtn" onclick="doModalLogin()">
+            <span id="modalBtnText">Giriş Yap</span>
+            <i class="fas fa-arrow-right" id="modalBtnIcon"></i>
+        </button>
+
+        <div class="modal-footer-link">
+            Hesabınız yok mu?
+            <a onclick="closeModal(); sessionStorage.setItem('openRegister','1'); window.location.href='login';">Ücretsiz kayıt olun</a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ── State ──────────────────────────────────────────
+    var progress = 0;
+    var fullyExpanded = false;
+    var contentVisible = false;
+    var touchStartY = 0;
+
+    // ── Elements ───────────────────────────────────────
+    var bg          = document.getElementById('bg');
+    var mediaCard   = document.getElementById('media-card');
+    var mediaOverlay= document.getElementById('media-overlay');
+    var titleTop    = document.getElementById('title-top');
+    var titleBottom = document.getElementById('title-bottom');
+    var scrollHint  = document.getElementById('scroll-hint');
+    var dateText    = document.getElementById('date-text');
+    var scrollText  = document.getElementById('scroll-text');
+    var afterContent= document.getElementById('after-content');
+
+    // ── Constants ──────────────────────────────────────
+    var isMobile = window.innerWidth < 768;
+    var BASE_W   = 300;
+    var BASE_H   = 400;
+    var GROW_W   = isMobile ? 600  : 1250;
+    var GROW_H   = isMobile ? 200  : 400;
+    var TEXT_VW  = isMobile ? 180  : 150;
+
+    // ── Render ─────────────────────────────────────────
+    function render(p) {
+        // Background fade
+        bg.style.opacity = 1 - p;
+
+        // Expanding card dimensions
+        var w  = Math.min(BASE_W + p * GROW_W, window.innerWidth  * 0.98);
+        var h  = Math.min(BASE_H + p * GROW_H, window.innerHeight * 0.92);
+        mediaCard.style.width        = w + 'px';
+        mediaCard.style.height       = h + 'px';
+        mediaCard.style.borderRadius = (20 * (1 - p)) + 'px';
+
+        // Scroll hint position: just below the card
+        var hintTop = (window.innerHeight / 2) + (h / 2) + 16;
+        scrollHint.style.top  = hintTop + 'px';
+        scrollHint.style.left = '50%';
+        scrollHint.style.transform = 'translateX(-50%)';
+        scrollHint.style.opacity   = Math.max(0, 1 - p * 4).toString();
+
+        // Media overlay fade
+        var ov = Math.max(0, 0.45 - p * 0.35);
+        mediaOverlay.style.opacity = ov.toString();
+
+        // Title movement
+        var move = p * TEXT_VW;
+        titleTop.style.transform    = 'translateX(-' + move + 'vw)';
+        titleBottom.style.transform = 'translateX('  + move + 'vw)';
+
+        // Scroll hint texts move opposite directions
+        dateText.style.transform  = 'translateX(-' + move + 'vw)';
+        scrollText.style.transform = 'translateX(' + move + 'vw)';
+
+        // After-content reveal
+        if (p >= 1 && !contentVisible) {
+            contentVisible = true;
+            document.body.style.overflowY = 'auto';
+            afterContent.style.display = 'block';
+            // Small delay so display:block takes effect before transition
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    afterContent.classList.add('visible');
+                });
+            });
+        } else if (p < 0.8 && contentVisible) {
+            contentVisible = false;
+            afterContent.classList.remove('visible');
+            setTimeout(function () {
+                if (!contentVisible) afterContent.style.display = 'none';
+            }, 350);
+        }
+
+        // Lock scroll while animating
+        if (p < 1) {
+            document.body.style.overflowY = 'hidden';
+            window.scrollTo(0, 0);
+        }
+    }
+
+    // ── Wheel ──────────────────────────────────────────
+    function onWheel(e) {
+        // Allow normal scroll once fully expanded and user isn't trying to go back
+        if (fullyExpanded && e.deltaY > 0) return;
+
+        // User scrolls back up from top → collapse
+        if (fullyExpanded && e.deltaY < 0 && window.scrollY <= 5) {
+            fullyExpanded = false;
+        }
+
+        if (!fullyExpanded) {
+            e.preventDefault();
+            progress = clamp(progress + e.deltaY * 0.0009, 0, 1);
+            if (progress >= 1) fullyExpanded = true;
+            render(progress);
+        }
+    }
+
+    // ── Touch ──────────────────────────────────────────
+    function onTouchStart(e) {
+        touchStartY = e.touches[0].clientY;
+    }
+
+    function onTouchMove(e) {
+        if (!touchStartY) return;
+        var y     = e.touches[0].clientY;
+        var delta = touchStartY - y;         // positive = scroll down
+
+        if (fullyExpanded && delta < -20 && window.scrollY <= 5) {
+            fullyExpanded = false;
+        }
+
+        if (!fullyExpanded) {
+            e.preventDefault();
+            var factor = delta < 0 ? 0.008 : 0.005;
+            progress = clamp(progress + delta * factor, 0, 1);
+            if (progress >= 1) fullyExpanded = true;
+            render(progress);
+            touchStartY = y;
+        }
+    }
+
+    function onTouchEnd() { touchStartY = 0; }
+
+    // ── Scroll guard ───────────────────────────────────
+    function onScroll() {
+        if (!fullyExpanded) window.scrollTo(0, 0);
+    }
+
+    // ── Resize ─────────────────────────────────────────
+    function onResize() {
+        isMobile = window.innerWidth < 768;
+        GROW_W   = isMobile ? 600  : 1250;
+        GROW_H   = isMobile ? 200  : 400;
+        TEXT_VW  = isMobile ? 180  : 150;
+        render(progress);
+    }
+
+    // ── Utils ──────────────────────────────────────────
+    function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
+
+    // ── Event listeners ────────────────────────────────
+    window.addEventListener('wheel',      onWheel,      { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: false });
+    window.addEventListener('touchmove',  onTouchMove,  { passive: false });
+    window.addEventListener('touchend',   onTouchEnd);
+    window.addEventListener('scroll',     onScroll);
+    window.addEventListener('resize',     onResize);
+
+    // ── Initial render ─────────────────────────────────
+    render(0);
+
+    // ── Handle "register" shortcut from CTA ───────────
+    document.querySelector('.btn-secondary').addEventListener('click', function () {
+        sessionStorage.setItem('openRegister', '1');
+    });
+
+}());
+
+// ── Modal ─────────────────────────────────────────────
+function openModal() {
+    document.getElementById('loginModal').classList.add('open');
+    setTimeout(function () { document.getElementById('modalUsername').focus(); }, 100);
+}
+
+function closeModal() {
+    document.getElementById('loginModal').classList.remove('open');
+    document.getElementById('modalError').classList.remove('show');
+    document.getElementById('modalUsername').value = '';
+    document.getElementById('modalPassword').value = '';
+    document.getElementById('modalBtnText').textContent = 'Giriş Yap';
+    document.getElementById('modalBtn').disabled = false;
+}
+
+async function doModalLogin() {
+    var username = document.getElementById('modalUsername').value.trim();
+    var password = document.getElementById('modalPassword').value;
+    var errorEl  = document.getElementById('modalError');
+    var btn      = document.getElementById('modalBtn');
+    var btnText  = document.getElementById('modalBtnText');
+    var btnIcon  = document.getElementById('modalBtnIcon');
+
+    if (!username || !password) {
+        errorEl.textContent = 'Lütfen tüm alanları doldurunuz.';
+        errorEl.classList.add('show');
+        return;
+    }
+
+    errorEl.classList.remove('show');
+    btn.disabled = true;
+    btnText.textContent = 'Giriş yapılıyor...';
+    btnIcon.style.display = 'none';
+
+    try {
+        var res  = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, password: password })
+        });
+        var data = await res.json();
+
+        if (res.ok && data.success) {
+            localStorage.setItem('atys_user', JSON.stringify({
+                username:   data.username,
+                role:       data.role,
+                avatar_url: data.avatar_url  || '',
+                first_name: data.first_name  || '',
+                last_name:  data.last_name   || ''
+            }));
+            btnText.textContent = 'Başarılı!';
+            btnIcon.className   = 'fas fa-check';
+            btnIcon.style.display = 'inline';
+            btn.style.background  = 'linear-gradient(135deg,#059669,#047857)';
+            setTimeout(function () { window.location.href = 'index'; }, 600);
+        } else {
+            throw new Error(data.message || 'Kullanıcı adı veya şifre hatalı.');
+        }
+    } catch (err) {
+        var msg = err.message === 'Failed to fetch'
+            ? 'Sunucuya bağlanılamadı.'
+            : err.message;
+        errorEl.textContent = msg;
+        errorEl.classList.add('show');
+        btn.disabled = false;
+        btnText.textContent = 'Giriş Yap';
+        btnIcon.style.display = 'inline';
+    }
+}
+
+// ESC ile kapat, overlay'e tıklayınca kapat
+document.getElementById('loginModal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+
+</body>
+</html>
